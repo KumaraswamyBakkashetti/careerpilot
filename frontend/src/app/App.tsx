@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { ApiError } from "../api/client";
 import { getHealth, type FoundationHealth } from "../api/health";
+import { KnowledgeExplorer } from "./KnowledgeExplorer";
+import { StudentWorkspace } from "./StudentWorkspace";
 
 type State =
   | { kind: "loading" }
@@ -73,14 +75,14 @@ export function App() {
           CareerPilot
           <span className="brand-dot" aria-hidden="true" />
         </a>
-        <span className="phase-tag">PHASE 01</span>
+        <span className="phase-tag">PHASE 03</span>
       </header>
       <main>
         <p className="eyebrow">ENGINEERING FOUNDATION</p>
         <h1>
-          A dependable start.
+          Evidence first,
           <br />
-          <span>Room to grow.</span>
+          <span>certainty only when earned.</span>
         </h1>
         <p className="intro">
           A Multi-Agent Placement Intelligence System Using Knowledge
@@ -151,12 +153,14 @@ export function App() {
             )}
           </div>
         </section>
+        <KnowledgeExplorer />
+        <StudentWorkspace />
         <aside className="scope-note">
-          <span aria-hidden="true">01 /</span>
+          <span aria-hidden="true">03 /</span>
           <p>
-            Phase 1 establishes the engineering platform. Resume intelligence,
-            knowledge ingestion, retrieval, and agent workflows belong to later
-            phases.
+            CareerPilot distinguishes extracted, confirmed, rejected, and
+            unverified evidence. It never assigns resume-based proficiency
+            scores.
           </p>
         </aside>
       </main>

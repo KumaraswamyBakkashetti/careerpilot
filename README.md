@@ -4,7 +4,7 @@
 
 CareerPilot is a placement-preparation and career-mentoring system. Its planned capabilities combine persistent student profiles, resume evidence, career-domain knowledge, graph/vector retrieval, agent orchestration, and evidence-backed preparation workflows. KA-RAG informs the research direction; this repository does not implement the paper or claim its results.
 
-**Current status: Phase 1 implemented and locally verified.** See [PHASE1_REPORT.md](PHASE1_REPORT.md) for exact evidence and verification limits. No Phase 2+ business functionality is implemented.
+**Current status: Phase 3 implemented and locally verified.** CareerPilot now has authenticated private profiles, secure PDF/DOCX processing, student-reviewed canonical skill evidence, resume versioning, and deterministic role gap analysis. See [PHASE3_REPORT.md](PHASE3_REPORT.md) for evidence and limits.
 
 ## Scope and architecture
 
@@ -17,11 +17,12 @@ FastAPI (one modular monolith)
 Application services / dependency protocols
        |
 Infrastructure adapters
-       +-- MongoDB: student/application state (future collections)
-       +-- Neo4j: canonical career knowledge (future graph schema)
+       +-- MongoDB: accounts, profiles, resumes, evidence, gap snapshots
+       +-- private storage: original PDF/DOCX files
+       +-- Neo4j: canonical career knowledge and role requirements
 ```
 
-Phase 1 includes a status page, versioned system metadata, real liveness/readiness checks, pooled asynchronous database adapters, typed settings, sanitized errors, JSON logs, correlation IDs, tests, Docker development services, and quality checks. Authentication, resume upload, graph ingestion, FAISS, LLM providers, roadmaps, interviews, and scoring are deliberately outside this phase.
+Phase 3 retains the Phase 1 platform and Phase 2 graph. It adds short-lived signed JWT identity, Argon2 password hashes, owner-filtered persistence, private resume storage, bounded deterministic extraction, conservative canonical matching, evidence review, and versioned gap snapshots. No LLM, vector store, RAG, roadmap, interview workflow, or proficiency score is implemented.
 
 Domain modules will be added when their real use cases arrive; there are no empty placeholder modules. See [architecture](docs/architecture/phase1.md), [ADR-001](docs/architecture/ADR-001-modular-monolith.md), and [API conventions](docs/api-contract.md).
 
@@ -46,7 +47,7 @@ npm.cmd ci
 cd ..
 ```
 
-The setup script preserves existing configuration and generates a random local Neo4j password into ignored `.env`. Alternatively copy `.env.example` to `.env`, choose a local password (at least eight characters), and put the same value in `CP_NEO4J_PASSWORD` and `NEO4J_LOCAL_PASSWORD`. Copy `frontend/.env.example` to `frontend/.env` if you need overrides.
+The setup script preserves existing configuration and generates a random local Neo4j password and 32-byte JWT signing secret into ignored `.env`. Alternatively copy `.env.example` to `.env`, set both secrets, and put the same Neo4j password in `CP_NEO4J_PASSWORD` and `NEO4J_LOCAL_PASSWORD`. Copy `frontend/.env.example` to `frontend/.env` if you need overrides.
 
 On Windows hosts that disable scripts, invoke each reviewed project script with a process-only override, for example `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/setup-env.ps1`, `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/start-integration.ps1`, or `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check.ps1 -Integration`. These commands do not change the machine's persistent execution policy. Linux/macOS can use `pwsh -File scripts/check.ps1`.
 
@@ -67,13 +68,17 @@ Backend settings use **`CP_`** to avoid machine-wide environment collisions. The
 | `CP_NEO4J_PASSWORD` | Empty until configured; readiness fails honestly |
 | `CP_NEO4J_DATABASE` | `neo4j` |
 | `CP_DEPENDENCY_TIMEOUT_SECONDS` | `3`; bounded startup, probes, and cleanup |
+| `CP_JWT_SECRET`, `CP_JWT_TTL_MINUTES` | Required signing secret; 60-minute local token lifetime |
+| `CP_RESUME_MAX_BYTES` | 5 MiB upload limit |
+| `CP_RESUME_MAX_PAGES`, `CP_RESUME_MAX_TEXT_CHARS` | 20 pages and 200,000 extracted characters |
+| `CP_RESUME_STORAGE_ROOT` | Private local storage; Docker uses a named volume |
 | `NEO4J_LOCAL_PASSWORD` | Required Compose development credential |
 | `MONGODB_PORT`, `NEO4J_BOLT_PORT`, `NEO4J_HTTP_PORT` | Optional published development database ports |
 | `VITE_API_BASE_URL` | Empty = same-origin; set public API origin for separate deployments |
 | `BACKEND_PROXY_TARGET` | Vite dev proxy only; defaults to `http://127.0.0.1:8000` |
 | `CP_VITE_POLLING` | Frontend dev watcher only; `true` enables polling on locked/synchronized filesystems |
 
-Production requires explicit MongoDB URI/database, Neo4j URI/user/password, and CORS origins. Debug must be off and CORS origins must be HTTPS. There are no invented production credentials. Production authentication, TLS termination, database roles and private-resource ownership enforcement remain later deployment work; this local Compose configuration is not a production deployment.
+Production requires explicit MongoDB URI/database, Neo4j URI/user/password, JWT secret, private storage root, and HTTPS CORS origins. Debug must be off. TLS termination, database credentials/roles, rate limiting, token revocation, backup, malware scanning, and durable object storage remain deployment work; this local Compose configuration is not a production deployment.
 
 ## Database startup
 
@@ -83,7 +88,7 @@ docker compose up -d --wait --wait-timeout 240
 docker compose ps
 ```
 
-This starts MongoDB 8.0 and Neo4j 5.26 Community with named volumes and real health checks. Published ports bind only to loopback. MongoDB is unauthenticated **only in this local development setup**. Neo4j requires your local password. No application collections, graph schema or seed data are created.
+This starts MongoDB 8.0 and Neo4j 5.26 Community with named volumes and real health checks. Published ports bind only to loopback. MongoDB is unauthenticated **only in this local development setup**. Neo4j requires your local password. Compose does not mutate the graph automatically; run the explicit schema/ingestion commands below.
 
 ## Backend startup
 
@@ -98,6 +103,57 @@ FastAPI serves `http://127.0.0.1:8000`; OpenAPI is at `/openapi.json`, Swagger U
 
 The process starts even if databases are down. Pools are allocated once per lifespan. Startup probes are bounded; readiness probes actual dependencies on every call and recovers when reachable databases return. An absent Neo4j password requires configuration and a restart. No in-memory fallback exists. Shutdown attempts to close both adapters even if one close fails, with bounded cleanup.
 
+## Career knowledge setup
+
+The seed is [backend/knowledge_data/seed.json](backend/knowledge_data/seed.json), version `careerpilot-knowledge-v1`. Its six source notes are hashed and every relationship cites an exact assertion locator. Validate before opening Neo4j, then ingest through the local CLI:
+
+```powershell
+cd backend
+uv run --frozen python -m app.modules.knowledge.cli validate
+uv run --frozen python -m app.modules.knowledge.cli schema
+uv run --frozen python -m app.modules.knowledge.cli ingest --accept-curated
+uv run --frozen python -m app.modules.knowledge.cli inspect
+uv run --frozen python -m app.modules.knowledge.cli profile
+```
+
+`--accept-curated` records the operator's explicit acceptance of the reviewed learning profiles and synthetic demonstration. Ingestion is a single Neo4j transaction, uses dataset ownership, rejects same-version content changes and version downgrades, and prunes only records owned by this dataset. Running it repeatedly does not add nodes or relationships. Cypher lives only in the infrastructure adapter; no HTTP write or arbitrary-Cypher endpoint exists.
+
+Read APIs under `/api/v1/knowledge` include roles, role skills, skill resources/topics, assertion provenance, company roles/context, and company-role skills. Lists use stable name/ID order, `limit` 1–100, and `offset` 0–10000. Examples:
+
+```powershell
+curl.exe http://127.0.0.1:8000/api/v1/knowledge/roles
+curl.exe http://127.0.0.1:8000/api/v1/knowledge/roles/role_backend_developer/skills
+curl.exe http://127.0.0.1:8000/api/v1/knowledge/skills/skill_python/resources
+```
+
+The frontend explorer loads these endpoints; it has separate loading, empty, missing, graph-outage, and backend-outage states. If it reports knowledge unavailable, check `/health/ready`, container health, seed ingestion, and then `cli inspect`. Details are in [knowledge graph architecture](docs/architecture/knowledge-graph.md) and [dataset notes](docs/knowledge-dataset.md).
+
+## Private student evidence
+
+Registration and login return a short-lived bearer token. Private routes derive the owner from that token; they never accept a `student_id` parameter. A minimal API sequence is:
+
+```text
+POST   /api/v1/auth/register
+POST   /api/v1/auth/token
+GET    /api/v1/student/profile
+PUT    /api/v1/student/profile
+POST   /api/v1/student/resumes
+GET    /api/v1/student/resumes
+POST   /api/v1/student/resumes/{resume_id}/process
+DELETE /api/v1/student/resumes/{resume_id}
+GET    /api/v1/student/resumes/{resume_id}/evidence
+GET    /api/v1/student/evidence
+PUT    /api/v1/student/evidence/{evidence_id}
+POST   /api/v1/student/gap-analyses
+GET    /api/v1/student/gap-analyses/{run_id}
+```
+
+Uploads use multipart field `file`. Matching PDF and DOCX signatures, MIME types, extensions, parser integrity, and configured limits are required. Files are stored under generated keys. An identical upload for the same student reuses its existing record; different uploads create immutable versions and only the newest is active.
+
+Extraction is synchronous and deterministic. PDF and DOCX text retain useful line and section context; image-only PDFs require OCR and fail explicitly because OCR is outside Phase 3. Exact canonical names and curated aliases normalize through live Neo4j reads. Unknown mentions remain unresolved until rejected or corrected to a backend-validated canonical skill. Gap results use direct evidence only and label requirements `SUPPORTED`, `PARTIALLY_SUPPORTED`, or `UNVERIFIED`; they never infer proficiency.
+
+Deleting a resume removes the private file, processing run, and derived evidence and tombstones its metadata. Historical gap snapshots remain for audit, without restoring deleted evidence text. Full account deletion is not implemented. The complete design is in [student evidence architecture](docs/architecture/student-evidence.md) and [ADR-005](docs/architecture/ADR-005-student-evidence-boundary.md).
+
 ## Frontend startup
 
 In another terminal:
@@ -107,7 +163,7 @@ cd frontend
 npm.cmd run dev
 ```
 
-Open `http://127.0.0.1:5173`. The status interface has loading, ready, dependency outage and unreachable backend states, a manual refresh button, and request IDs. Vite forwards `/health` and `/api` to FastAPI. The production bundle needs either a reverse proxy for those paths or `VITE_API_BASE_URL` set **before building**; Vite preview does not supply the development proxy.
+Open `http://127.0.0.1:5173`. Create a private workspace or sign in, upload a PDF/DOCX, review each extracted mention, choose a canonical role, and run gap analysis. Tokens stay in React memory and are cleared on refresh/sign-out. The page also retains the knowledge explorer and service diagnostics. Vite forwards `/health` and `/api` to FastAPI. The production bundle needs either a reverse proxy for those paths or `VITE_API_BASE_URL` set **before building**.
 
 ## Docker application workflow
 
@@ -170,7 +226,7 @@ npm.cmd audit
 ./scripts/start-integration.ps1
 ```
 
-This starts project `careerpilot-integration` on dedicated ports and runs the real tests with a separately named MongoDB test database. The script intentionally leaves containers running for inspection. Tests reject non-loopback targets and normal database ports. They only ping/read `RETURN 1`; there are no application writes. Neo4j Community has one database: isolation uses a separate container and volume, not a shared production database.
+This starts project `careerpilot-integration` on dedicated ports and runs the real tests with a separately named MongoDB test database. The script intentionally leaves containers running for inspection. Tests reject non-loopback targets and normal database ports. Phase 3 tests write disposable accounts, resumes, evidence, and gap snapshots to that isolated MongoDB and idempotently seed the isolated Neo4j graph. Neo4j Community has one database, so isolation uses a separate container and volume rather than a shared production database.
 
 Equivalent commands:
 

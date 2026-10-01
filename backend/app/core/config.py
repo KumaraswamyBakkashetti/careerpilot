@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     neo4j_database: str = "neo4j"
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
     dependency_timeout_seconds: float = Field(default=3, ge=0.1, le=30)
+    jwt_secret: SecretStr = SecretStr("")
+    jwt_ttl_minutes: int = Field(default=60, ge=5, le=1440)
+    resume_max_bytes: int = Field(default=5_242_880, ge=1024, le=20_971_520)
+    resume_max_pages: int = Field(default=20, ge=1, le=100)
+    resume_max_text_chars: int = Field(default=200_000, ge=1000, le=1_000_000)
+    resume_storage_root: Path = Path(__file__).resolve().parents[3] / "uploads" / "resumes"
 
     @field_validator("cors_origins")
     @classmethod
@@ -94,11 +100,15 @@ class Settings(BaseSettings):
                 "neo4j_user",
                 "neo4j_password",
                 "cors_origins",
+                "jwt_secret",
+                "resume_storage_root",
             }
             if not required.issubset(self.model_fields_set):
                 raise ValueError("Production requires explicit database and CORS configuration")
             if not self.neo4j_password.get_secret_value() or self.debug:
                 raise ValueError("Production requires a Neo4j password and debug disabled")
+            if len(self.jwt_secret.get_secret_value()) < 32:
+                raise ValueError("Production requires a JWT secret of at least 32 characters")
             if any(not origin.startswith("https://") for origin in self.cors_origins):
                 raise ValueError("Production CORS origins must use HTTPS")
         return self

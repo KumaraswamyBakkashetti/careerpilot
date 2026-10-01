@@ -1,0 +1,1555 @@
+{
+  "dataset_id": "careerpilot_core",
+  "version": "careerpilot-knowledge-v1",
+  "validated_at": "2026-10-01T09:00:00Z",
+  "sources": [
+    {
+      "id": "source_curated",
+      "source_type": "CURATED_DATASET",
+      "title": "CareerPilot v1 curated learning profiles",
+      "uri": "urn:careerpilot:learning-profiles:v1",
+      "publisher": "CareerPilot project",
+      "collected_at": "2026-10-01T08:00:00Z",
+      "published_at": null,
+      "snapshot_path": "sources/curated.md",
+      "content_hash": "98121e3176ef0d02ac9b6ae17e8f915879530209ac4a1b71bff5f2bc08312ae6",
+      "synthetic": false
+    },
+    {
+      "id": "source_synthetic",
+      "source_type": "CURATED_DATASET",
+      "title": "CareerPilot synthetic company demonstration v1",
+      "uri": "urn:careerpilot:synthetic-company:v1",
+      "publisher": "CareerPilot project",
+      "collected_at": "2026-10-01T08:00:00Z",
+      "published_at": null,
+      "snapshot_path": "sources/synthetic.md",
+      "content_hash": "dec871fd1a55bac226eb6ce2aa1274430fecad26d4bdace9b61ec0f5350bbe0a",
+      "synthetic": true
+    },
+    {
+      "id": "source_python",
+      "source_type": "DOCUMENTATION",
+      "title": "Python tutorial: data structures",
+      "uri": "https://docs.python.org/3/tutorial/datastructures.html",
+      "publisher": "Python Software Foundation",
+      "collected_at": "2026-10-01T08:00:00Z",
+      "published_at": null,
+      "snapshot_path": "sources/python.md",
+      "content_hash": "77edb67e1f8dd0bb3341fad1ffdd175263f6965ef8e90c46568839f5ee53bf10",
+      "synthetic": false
+    },
+    {
+      "id": "source_postgres",
+      "source_type": "DOCUMENTATION",
+      "title": "PostgreSQL 18 SQL tutorial",
+      "uri": "https://www.postgresql.org/docs/18/tutorial-sql.html",
+      "publisher": "PostgreSQL Global Development Group",
+      "collected_at": "2026-10-01T08:00:00Z",
+      "published_at": null,
+      "snapshot_path": "sources/postgres.md",
+      "content_hash": "ae9acaa6760c4a95d0f8639cc45e3890488124afa0ebce8b843d119a99049e98",
+      "synthetic": false
+    },
+    {
+      "id": "source_mdn",
+      "source_type": "DOCUMENTATION",
+      "title": "MDN core web development modules",
+      "uri": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core",
+      "publisher": "MDN contributors",
+      "collected_at": "2026-10-01T08:00:00Z",
+      "published_at": null,
+      "snapshot_path": "sources/mdn.md",
+      "content_hash": "86715f0bbdcba868c205dc417de27588b971644b78be7d393362be42df81a2b9",
+      "synthetic": false
+    },
+    {
+      "id": "source_pytest",
+      "source_type": "DOCUMENTATION",
+      "title": "pytest assertion guide",
+      "uri": "https://docs.pytest.org/en/stable/how-to/assert.html",
+      "publisher": "pytest contributors",
+      "collected_at": "2026-10-01T08:00:00Z",
+      "published_at": null,
+      "snapshot_path": "sources/pytest.md",
+      "content_hash": "6ccffea0ee7eb5b8b700808df723d2b976c8bdce6a12aa7cbf2c26fc6c399f71",
+      "synthetic": false
+    }
+  ],
+  "entities": [
+    {
+      "id": "skill_python",
+      "kind": "Skill",
+      "name": "Python",
+      "description": "Writing programs in the Python language.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "Python 3"
+      ],
+      "category": "Programming"
+    },
+    {
+      "id": "skill_sql",
+      "kind": "Skill",
+      "name": "SQL",
+      "description": "Expressing relational queries in SQL.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "Structured Query Language"
+      ],
+      "category": "Data"
+    },
+    {
+      "id": "skill_postgresql",
+      "kind": "Skill",
+      "name": "PostgreSQL",
+      "description": "Using the PostgreSQL relational database.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "Postgres"
+      ],
+      "category": "Data"
+    },
+    {
+      "id": "skill_javascript",
+      "kind": "Skill",
+      "name": "JavaScript",
+      "description": "Writing JavaScript programs for the web.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "JS"
+      ],
+      "category": "Programming"
+    },
+    {
+      "id": "skill_typescript",
+      "kind": "Skill",
+      "name": "TypeScript",
+      "description": "Using TypeScript types and JavaScript interoperability.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "TS"
+      ],
+      "category": "Programming"
+    },
+    {
+      "id": "skill_html",
+      "kind": "Skill",
+      "name": "HTML",
+      "description": "Structuring web content with semantic HTML.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "HTML5"
+      ],
+      "category": "Web"
+    },
+    {
+      "id": "skill_css",
+      "kind": "Skill",
+      "name": "CSS",
+      "description": "Styling and laying out web content using CSS.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "CSS3"
+      ],
+      "category": "Web"
+    },
+    {
+      "id": "skill_git",
+      "kind": "Skill",
+      "name": "Git",
+      "description": "Tracking and collaborating on changes using Git.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "Git version control"
+      ],
+      "category": "Engineering"
+    },
+    {
+      "id": "skill_http",
+      "kind": "Skill",
+      "name": "HTTP",
+      "description": "Understanding HTTP request and response semantics.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [],
+      "category": "Web"
+    },
+    {
+      "id": "skill_rest",
+      "kind": "Skill",
+      "name": "REST API design",
+      "description": "Designing resource-oriented HTTP API contracts.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "REST"
+      ],
+      "category": "Web"
+    },
+    {
+      "id": "skill_testing",
+      "kind": "Skill",
+      "name": "Software testing",
+      "description": "Checking software behavior against explicit expectations.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "Testing"
+      ],
+      "category": "Quality"
+    },
+    {
+      "id": "skill_pytest",
+      "kind": "Skill",
+      "name": "pytest",
+      "description": "Writing and running automated Python tests with pytest.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [],
+      "category": "Quality"
+    },
+    {
+      "id": "skill_test_design",
+      "kind": "Skill",
+      "name": "Test case design",
+      "description": "Selecting cases and expected outcomes for a test plan.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [],
+      "category": "Quality"
+    },
+    {
+      "id": "skill_relational_modeling",
+      "kind": "Skill",
+      "name": "Relational modeling",
+      "description": "Designing tables, keys, and relational constraints.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [],
+      "category": "Data"
+    },
+    {
+      "id": "skill_sql_joins",
+      "kind": "Skill",
+      "name": "SQL joins",
+      "description": "Combining related tables with explicit join conditions.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "Joining tables"
+      ],
+      "category": "Data"
+    },
+    {
+      "id": "skill_data_analysis",
+      "kind": "Skill",
+      "name": "Data analysis",
+      "description": "Exploring and interpreting data with stated assumptions.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [],
+      "category": "Data"
+    },
+    {
+      "id": "skill_statistics",
+      "kind": "Skill",
+      "name": "Descriptive statistics",
+      "description": "Summarizing distributions using descriptive measures.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [],
+      "category": "Data"
+    },
+    {
+      "id": "skill_linux",
+      "kind": "Skill",
+      "name": "Linux command line",
+      "description": "Using shell commands for local engineering tasks.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "Shell basics"
+      ],
+      "category": "Engineering"
+    },
+    {
+      "id": "skill_ci",
+      "kind": "Skill",
+      "name": "Continuous integration",
+      "description": "Running repeatable validation checks on changes.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [
+        "CI"
+      ],
+      "category": "Engineering"
+    },
+    {
+      "id": "skill_indexing",
+      "kind": "Skill",
+      "name": "Database indexing",
+      "description": "Understanding index behavior and query access patterns.",
+      "source_ids": [
+        "source_curated"
+      ],
+      "aliases": [],
+      "category": "Data"
+    },
+    {
+      "id": "role_backend_developer",
+      "kind": "Role",
+      "name": "Backend Developer",
+      "description": "A CareerPilot curated learning profile; not a universal hiring requirement.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "role_frontend_developer",
+      "kind": "Role",
+      "name": "Frontend Developer",
+      "description": "A CareerPilot curated learning profile; not a universal hiring requirement.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "role_data_analyst",
+      "kind": "Role",
+      "name": "Data Analyst",
+      "description": "A CareerPilot curated learning profile; not a universal hiring requirement.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "role_qa_engineer",
+      "kind": "Role",
+      "name": "QA Engineer",
+      "description": "A CareerPilot curated learning profile; not a universal hiring requirement.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "role_data_engineer",
+      "kind": "Role",
+      "name": "Data Engineer",
+      "description": "A CareerPilot curated learning profile; not a universal hiring requirement.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "topic_python_collections",
+      "kind": "InterviewTopic",
+      "name": "Python collections",
+      "description": "A curated discussion topic for checking understanding; not a sourced employer interview question.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "topic_sql_joins",
+      "kind": "InterviewTopic",
+      "name": "SQL join reasoning",
+      "description": "A curated discussion topic for checking understanding; not a sourced employer interview question.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "topic_web_structure",
+      "kind": "InterviewTopic",
+      "name": "Web structure and styling",
+      "description": "A curated discussion topic for checking understanding; not a sourced employer interview question.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "topic_assertions",
+      "kind": "InterviewTopic",
+      "name": "Testing assertions",
+      "description": "A curated discussion topic for checking understanding; not a sourced employer interview question.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "topic_http_contracts",
+      "kind": "InterviewTopic",
+      "name": "HTTP API contracts",
+      "description": "A curated discussion topic for checking understanding; not a sourced employer interview question.",
+      "source_ids": [
+        "source_curated"
+      ]
+    },
+    {
+      "id": "resource_python",
+      "kind": "Resource",
+      "name": "Python data structures tutorial",
+      "description": "Official documentation referenced by a small original scope observation note.",
+      "source_ids": [
+        "source_python"
+      ],
+      "url": "https://docs.python.org/3/tutorial/datastructures.html",
+      "content_ref": "content_python_v1"
+    },
+    {
+      "id": "resource_postgres",
+      "kind": "Resource",
+      "name": "PostgreSQL 18 SQL tutorial",
+      "description": "Official documentation referenced by a small original scope observation note.",
+      "source_ids": [
+        "source_postgres"
+      ],
+      "url": "https://www.postgresql.org/docs/18/tutorial-sql.html",
+      "content_ref": "content_postgres_v1"
+    },
+    {
+      "id": "resource_mdn",
+      "kind": "Resource",
+      "name": "MDN core web modules",
+      "description": "Official documentation referenced by a small original scope observation note.",
+      "source_ids": [
+        "source_mdn"
+      ],
+      "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core",
+      "content_ref": "content_mdn_v1"
+    },
+    {
+      "id": "resource_pytest",
+      "kind": "Resource",
+      "name": "pytest assertion guide",
+      "description": "Official documentation referenced by a small original scope observation note.",
+      "source_ids": [
+        "source_pytest"
+      ],
+      "url": "https://docs.pytest.org/en/stable/how-to/assert.html",
+      "content_ref": "content_pytest_v1"
+    },
+    {
+      "id": "company_demo_labs",
+      "kind": "Company",
+      "name": "CareerPilot Demo Labs (Synthetic)",
+      "description": "Fictional company used only to demonstrate company-specific graph context.",
+      "source_ids": [
+        "source_synthetic"
+      ],
+      "synthetic": true
+    },
+    {
+      "id": "companyrole_demo_backend",
+      "kind": "CompanyRole",
+      "name": "Demo Backend Developer (Synthetic)",
+      "description": "Fictional company-specific role used only to demonstrate separate requirements.",
+      "source_ids": [
+        "source_synthetic"
+      ],
+      "synthetic": true
+    }
+  ],
+  "assertions": [
+    {
+      "id": "assertion_77f01313c83d076670037afebc6c0f2c",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_python",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to python. This is a curator choice, not an employer claim.",
+          "locator": "assertion_77f01313c83d076670037afebc6c0f2c",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_4b59bb7e4180571655ddb5fd5bda7e31",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_http",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to http. This is a curator choice, not an employer claim.",
+          "locator": "assertion_4b59bb7e4180571655ddb5fd5bda7e31",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_3f583409dcf0de3d7fda92d27970aa8e",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_rest",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to rest. This is a curator choice, not an employer claim.",
+          "locator": "assertion_3f583409dcf0de3d7fda92d27970aa8e",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_4d025bf0d16d7c88bb8a9c14f8520db5",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_sql",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to sql. This is a curator choice, not an employer claim.",
+          "locator": "assertion_4d025bf0d16d7c88bb8a9c14f8520db5",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_038306b8616f3f366c9fd66a0e95c6fd",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_postgresql",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to postgresql. This is a curator choice, not an employer claim.",
+          "locator": "assertion_038306b8616f3f366c9fd66a0e95c6fd",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_e8eda65d78ce3e3688219bc938bd7265",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_testing",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to testing. This is a curator choice, not an employer claim.",
+          "locator": "assertion_e8eda65d78ce3e3688219bc938bd7265",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_aeb604971ec4cf3e3be60602dfc4ea1d",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_git",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to git. This is a curator choice, not an employer claim.",
+          "locator": "assertion_aeb604971ec4cf3e3be60602dfc4ea1d",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_4ae10a7773af63e8d18c67446f871f45",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_relational_modeling",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to relational modeling. This is a curator choice, not an employer claim.",
+          "locator": "assertion_4ae10a7773af63e8d18c67446f871f45",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_03b0cbe7c490279c71acfbaf9a5e31fe",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_linux",
+      "type": "REQUIRES_SKILL",
+      "importance": "OPTIONAL",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns OPTIONAL importance to linux. This is a curator choice, not an employer claim.",
+          "locator": "assertion_03b0cbe7c490279c71acfbaf9a5e31fe",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_6f142058d2ddb4d48ee768afd3772987",
+      "source_id": "role_backend_developer",
+      "target_id": "skill_indexing",
+      "type": "REQUIRES_SKILL",
+      "importance": "OPTIONAL",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns OPTIONAL importance to indexing. This is a curator choice, not an employer claim.",
+          "locator": "assertion_6f142058d2ddb4d48ee768afd3772987",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_ee20cfc1900569eb6de4619cd1efbe67",
+      "source_id": "role_frontend_developer",
+      "target_id": "skill_html",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to html. This is a curator choice, not an employer claim.",
+          "locator": "assertion_ee20cfc1900569eb6de4619cd1efbe67",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_d2bb7f2a84b8fdca2382cc3c1a72a730",
+      "source_id": "role_frontend_developer",
+      "target_id": "skill_css",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to css. This is a curator choice, not an employer claim.",
+          "locator": "assertion_d2bb7f2a84b8fdca2382cc3c1a72a730",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_176686cfb2c37c02f16bd1d035d7d58d",
+      "source_id": "role_frontend_developer",
+      "target_id": "skill_javascript",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to javascript. This is a curator choice, not an employer claim.",
+          "locator": "assertion_176686cfb2c37c02f16bd1d035d7d58d",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_fb12853ac3166d5c9f0d295d12d99ebe",
+      "source_id": "role_frontend_developer",
+      "target_id": "skill_typescript",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to typescript. This is a curator choice, not an employer claim.",
+          "locator": "assertion_fb12853ac3166d5c9f0d295d12d99ebe",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_1b46158b8e90f075b070eb7345902097",
+      "source_id": "role_frontend_developer",
+      "target_id": "skill_http",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to http. This is a curator choice, not an employer claim.",
+          "locator": "assertion_1b46158b8e90f075b070eb7345902097",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_e93efa7f42bea0173db5112942383344",
+      "source_id": "role_frontend_developer",
+      "target_id": "skill_testing",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to testing. This is a curator choice, not an employer claim.",
+          "locator": "assertion_e93efa7f42bea0173db5112942383344",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_779720fd9dc93052a7e57c1cddaf6051",
+      "source_id": "role_frontend_developer",
+      "target_id": "skill_git",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to git. This is a curator choice, not an employer claim.",
+          "locator": "assertion_779720fd9dc93052a7e57c1cddaf6051",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_33c1e7cfd24776c69a5b0aead94ab9de",
+      "source_id": "role_frontend_developer",
+      "target_id": "skill_ci",
+      "type": "REQUIRES_SKILL",
+      "importance": "OPTIONAL",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns OPTIONAL importance to ci. This is a curator choice, not an employer claim.",
+          "locator": "assertion_33c1e7cfd24776c69a5b0aead94ab9de",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_e57a8399ddd2f582ce629b8908c880cb",
+      "source_id": "role_data_analyst",
+      "target_id": "skill_sql",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to sql. This is a curator choice, not an employer claim.",
+          "locator": "assertion_e57a8399ddd2f582ce629b8908c880cb",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_4cb91401ae84673c85889056878b0cc6",
+      "source_id": "role_data_analyst",
+      "target_id": "skill_data_analysis",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to data analysis. This is a curator choice, not an employer claim.",
+          "locator": "assertion_4cb91401ae84673c85889056878b0cc6",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_e7f539b4ad895549f9d2ef233839c009",
+      "source_id": "role_data_analyst",
+      "target_id": "skill_statistics",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to statistics. This is a curator choice, not an employer claim.",
+          "locator": "assertion_e7f539b4ad895549f9d2ef233839c009",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_27f0de8b4a14c284d52c2fc996ddfb89",
+      "source_id": "role_data_analyst",
+      "target_id": "skill_sql_joins",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to sql joins. This is a curator choice, not an employer claim.",
+          "locator": "assertion_27f0de8b4a14c284d52c2fc996ddfb89",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_0f23e9951d37b63a4e491c4c0fa1a557",
+      "source_id": "role_data_analyst",
+      "target_id": "skill_python",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to python. This is a curator choice, not an employer claim.",
+          "locator": "assertion_0f23e9951d37b63a4e491c4c0fa1a557",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_c9159e508ec53b1657cc45ac16d07c9d",
+      "source_id": "role_data_analyst",
+      "target_id": "skill_postgresql",
+      "type": "REQUIRES_SKILL",
+      "importance": "OPTIONAL",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns OPTIONAL importance to postgresql. This is a curator choice, not an employer claim.",
+          "locator": "assertion_c9159e508ec53b1657cc45ac16d07c9d",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_9f55100ae236bd65837713fae2eb39e9",
+      "source_id": "role_qa_engineer",
+      "target_id": "skill_testing",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to testing. This is a curator choice, not an employer claim.",
+          "locator": "assertion_9f55100ae236bd65837713fae2eb39e9",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_9d83b553a41234e488ae056f9c621124",
+      "source_id": "role_qa_engineer",
+      "target_id": "skill_test_design",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to test design. This is a curator choice, not an employer claim.",
+          "locator": "assertion_9d83b553a41234e488ae056f9c621124",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_784b91518731301a38c40c5b07a5e8e0",
+      "source_id": "role_qa_engineer",
+      "target_id": "skill_pytest",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to pytest. This is a curator choice, not an employer claim.",
+          "locator": "assertion_784b91518731301a38c40c5b07a5e8e0",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_2c1803939d5c31fda9aa8d7fcf342758",
+      "source_id": "role_qa_engineer",
+      "target_id": "skill_python",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to python. This is a curator choice, not an employer claim.",
+          "locator": "assertion_2c1803939d5c31fda9aa8d7fcf342758",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_6a80b0661fc8dcc31d3b40db6d9b78fb",
+      "source_id": "role_qa_engineer",
+      "target_id": "skill_http",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to http. This is a curator choice, not an employer claim.",
+          "locator": "assertion_6a80b0661fc8dcc31d3b40db6d9b78fb",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_01396e2bcf7bbd0a67259b53c6b77d52",
+      "source_id": "role_qa_engineer",
+      "target_id": "skill_git",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to git. This is a curator choice, not an employer claim.",
+          "locator": "assertion_01396e2bcf7bbd0a67259b53c6b77d52",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_2d36d32a21d04b8246e9cbf93775b48c",
+      "source_id": "role_qa_engineer",
+      "target_id": "skill_ci",
+      "type": "REQUIRES_SKILL",
+      "importance": "OPTIONAL",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns OPTIONAL importance to ci. This is a curator choice, not an employer claim.",
+          "locator": "assertion_2d36d32a21d04b8246e9cbf93775b48c",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_672f7a580a92615689c3c791d80935dd",
+      "source_id": "role_data_engineer",
+      "target_id": "skill_sql",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to sql. This is a curator choice, not an employer claim.",
+          "locator": "assertion_672f7a580a92615689c3c791d80935dd",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_38ee0790b63286f5a1db3bc8ec3e3210",
+      "source_id": "role_data_engineer",
+      "target_id": "skill_python",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to python. This is a curator choice, not an employer claim.",
+          "locator": "assertion_38ee0790b63286f5a1db3bc8ec3e3210",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_d02ba0d93792709e3d69f637d7a8f241",
+      "source_id": "role_data_engineer",
+      "target_id": "skill_relational_modeling",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns CORE importance to relational modeling. This is a curator choice, not an employer claim.",
+          "locator": "assertion_d02ba0d93792709e3d69f637d7a8f241",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_b51f787aad8a7b8ebe5cd0fe82c32012",
+      "source_id": "role_data_engineer",
+      "target_id": "skill_postgresql",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to postgresql. This is a curator choice, not an employer claim.",
+          "locator": "assertion_b51f787aad8a7b8ebe5cd0fe82c32012",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_1efa03a9803cd021c3b95c541f227385",
+      "source_id": "role_data_engineer",
+      "target_id": "skill_sql_joins",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to sql joins. This is a curator choice, not an employer claim.",
+          "locator": "assertion_1efa03a9803cd021c3b95c541f227385",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_68332dd35dfd50106881c28e9af06eb0",
+      "source_id": "role_data_engineer",
+      "target_id": "skill_testing",
+      "type": "REQUIRES_SKILL",
+      "importance": "EXPECTED",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns EXPECTED importance to testing. This is a curator choice, not an employer claim.",
+          "locator": "assertion_68332dd35dfd50106881c28e9af06eb0",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_ac5911348533fc6d6f445360ff82936c",
+      "source_id": "role_data_engineer",
+      "target_id": "skill_linux",
+      "type": "REQUIRES_SKILL",
+      "importance": "OPTIONAL",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns OPTIONAL importance to linux. This is a curator choice, not an employer claim.",
+          "locator": "assertion_ac5911348533fc6d6f445360ff82936c",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_2eac607cd26284010239c2ed33441793",
+      "source_id": "role_data_engineer",
+      "target_id": "skill_indexing",
+      "type": "REQUIRES_SKILL",
+      "importance": "OPTIONAL",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns OPTIONAL importance to indexing. This is a curator choice, not an employer claim.",
+          "locator": "assertion_2eac607cd26284010239c2ed33441793",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_330234690bd470320f18e8dc3a2125c2",
+      "source_id": "role_data_engineer",
+      "target_id": "skill_ci",
+      "type": "REQUIRES_SKILL",
+      "importance": "OPTIONAL",
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "This learning profile assigns OPTIONAL importance to ci. This is a curator choice, not an employer claim.",
+          "locator": "assertion_330234690bd470320f18e8dc3a2125c2",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_27b5a803011805a815a6c47fb04f068b",
+      "source_id": "topic_python_collections",
+      "target_id": "skill_python",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to python for illustrative assessment scope.",
+          "locator": "assertion_27b5a803011805a815a6c47fb04f068b",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_f2a73a90c06b8fdcf11a7af8c34d5302",
+      "source_id": "topic_sql_joins",
+      "target_id": "skill_sql",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to sql for illustrative assessment scope.",
+          "locator": "assertion_f2a73a90c06b8fdcf11a7af8c34d5302",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_1a246e5bdaf84464cf090457cdf29f62",
+      "source_id": "topic_sql_joins",
+      "target_id": "skill_sql_joins",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to sql joins for illustrative assessment scope.",
+          "locator": "assertion_1a246e5bdaf84464cf090457cdf29f62",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_d2b3910cf2c0cacf35a100972c0fa60a",
+      "source_id": "topic_sql_joins",
+      "target_id": "skill_postgresql",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to postgresql for illustrative assessment scope.",
+          "locator": "assertion_d2b3910cf2c0cacf35a100972c0fa60a",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_19eaff26b2360d72c538951c0e1c095d",
+      "source_id": "topic_web_structure",
+      "target_id": "skill_html",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to html for illustrative assessment scope.",
+          "locator": "assertion_19eaff26b2360d72c538951c0e1c095d",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_c39110cb552de1e6e4b19da5efb6890c",
+      "source_id": "topic_web_structure",
+      "target_id": "skill_css",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to css for illustrative assessment scope.",
+          "locator": "assertion_c39110cb552de1e6e4b19da5efb6890c",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_e43435256f2efd8d7e6504ff63675c3c",
+      "source_id": "topic_assertions",
+      "target_id": "skill_testing",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to testing for illustrative assessment scope.",
+          "locator": "assertion_e43435256f2efd8d7e6504ff63675c3c",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_6e4de01b5fdf407c02413e63ccc9f0a9",
+      "source_id": "topic_assertions",
+      "target_id": "skill_pytest",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to pytest for illustrative assessment scope.",
+          "locator": "assertion_6e4de01b5fdf407c02413e63ccc9f0a9",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_199b7e19540ada785e2a66047b86db90",
+      "source_id": "topic_http_contracts",
+      "target_id": "skill_http",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to http for illustrative assessment scope.",
+          "locator": "assertion_199b7e19540ada785e2a66047b86db90",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_26300233f96572dbd55a19524642c9bb",
+      "source_id": "topic_http_contracts",
+      "target_id": "skill_rest",
+      "type": "ASSESSES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_curated",
+          "evidence": "The curator maps this discussion topic to rest for illustrative assessment scope.",
+          "locator": "assertion_26300233f96572dbd55a19524642c9bb",
+          "method": "manual_curated"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_a297bfec1382ba966757c5b20765fa1f",
+      "source_id": "resource_python",
+      "target_id": "skill_python",
+      "type": "TEACHES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_python",
+          "evidence": "The referenced documentation introduces python within the scope summarized above.",
+          "locator": "assertion_a297bfec1382ba966757c5b20765fa1f",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_ebc31c504da6189a7b40cb05e4cd2972",
+      "source_id": "resource_python",
+      "target_id": "topic_python_collections",
+      "type": "COVERS_TOPIC",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_python",
+          "evidence": "The documented introductory scope overlaps the named topic; no claim of exhaustive interview coverage is made.",
+          "locator": "assertion_ebc31c504da6189a7b40cb05e4cd2972",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_9661b30288238ce1c5602ec5dfff0b59",
+      "source_id": "resource_postgres",
+      "target_id": "skill_sql",
+      "type": "TEACHES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_postgres",
+          "evidence": "The referenced documentation introduces sql within the scope summarized above.",
+          "locator": "assertion_9661b30288238ce1c5602ec5dfff0b59",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_1aa51aed02ed143d225a14580a895196",
+      "source_id": "resource_postgres",
+      "target_id": "skill_postgresql",
+      "type": "TEACHES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_postgres",
+          "evidence": "The referenced documentation introduces postgresql within the scope summarized above.",
+          "locator": "assertion_1aa51aed02ed143d225a14580a895196",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_c23ebe8f77051b8564bfa02972d28d39",
+      "source_id": "resource_postgres",
+      "target_id": "skill_sql_joins",
+      "type": "TEACHES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_postgres",
+          "evidence": "The referenced documentation introduces sql joins within the scope summarized above.",
+          "locator": "assertion_c23ebe8f77051b8564bfa02972d28d39",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_f44a2dbc0bb4684fbff70235ef331a7a",
+      "source_id": "resource_postgres",
+      "target_id": "topic_sql_joins",
+      "type": "COVERS_TOPIC",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_postgres",
+          "evidence": "The documented introductory scope overlaps the named topic; no claim of exhaustive interview coverage is made.",
+          "locator": "assertion_f44a2dbc0bb4684fbff70235ef331a7a",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_509dbf75b20a41d0e797ec8145490f30",
+      "source_id": "resource_mdn",
+      "target_id": "skill_html",
+      "type": "TEACHES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_mdn",
+          "evidence": "The referenced documentation introduces html within the scope summarized above.",
+          "locator": "assertion_509dbf75b20a41d0e797ec8145490f30",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_04186d2f7b38ea1807686800f6d9c640",
+      "source_id": "resource_mdn",
+      "target_id": "skill_css",
+      "type": "TEACHES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_mdn",
+          "evidence": "The referenced documentation introduces css within the scope summarized above.",
+          "locator": "assertion_04186d2f7b38ea1807686800f6d9c640",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_afc2927570513f0c65c54b32ac12d7ad",
+      "source_id": "resource_mdn",
+      "target_id": "skill_javascript",
+      "type": "TEACHES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_mdn",
+          "evidence": "The referenced documentation introduces javascript within the scope summarized above.",
+          "locator": "assertion_afc2927570513f0c65c54b32ac12d7ad",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_ae5f908ea01839e62f195475d69c3529",
+      "source_id": "resource_mdn",
+      "target_id": "topic_web_structure",
+      "type": "COVERS_TOPIC",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_mdn",
+          "evidence": "The documented introductory scope overlaps the named topic; no claim of exhaustive interview coverage is made.",
+          "locator": "assertion_ae5f908ea01839e62f195475d69c3529",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_504206e9ad2bd14703632bf86944ca85",
+      "source_id": "resource_pytest",
+      "target_id": "skill_testing",
+      "type": "TEACHES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_pytest",
+          "evidence": "The referenced documentation introduces testing within the scope summarized above.",
+          "locator": "assertion_504206e9ad2bd14703632bf86944ca85",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_2036811bb604ecb3d42f40b5884743a9",
+      "source_id": "resource_pytest",
+      "target_id": "skill_pytest",
+      "type": "TEACHES_SKILL",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_pytest",
+          "evidence": "The referenced documentation introduces pytest within the scope summarized above.",
+          "locator": "assertion_2036811bb604ecb3d42f40b5884743a9",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_71cef1e13e256e0bedb9ff042078b0a0",
+      "source_id": "resource_pytest",
+      "target_id": "topic_assertions",
+      "type": "COVERS_TOPIC",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_pytest",
+          "evidence": "The documented introductory scope overlaps the named topic; no claim of exhaustive interview coverage is made.",
+          "locator": "assertion_71cef1e13e256e0bedb9ff042078b0a0",
+          "method": "source_derived"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_399ad043f4453205122f6adb67ea5a14",
+      "source_id": "company_demo_labs",
+      "target_id": "companyrole_demo_backend",
+      "type": "OFFERS_ROLE",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_synthetic",
+          "evidence": "The fictional company offers the fictional backend role in this synthetic demonstration.",
+          "locator": "assertion_399ad043f4453205122f6adb67ea5a14",
+          "method": "synthetic"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_856cfee8723a9e94770914fb4ecc89e0",
+      "source_id": "companyrole_demo_backend",
+      "target_id": "role_backend_developer",
+      "type": "BASED_ON",
+      "importance": null,
+      "provenance": [
+        {
+          "source_id": "source_synthetic",
+          "evidence": "The fictional company role is based on the curated generic backend learning profile.",
+          "locator": "assertion_856cfee8723a9e94770914fb4ecc89e0",
+          "method": "synthetic"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_703894257cd4d0c53685d893568a0b86",
+      "source_id": "companyrole_demo_backend",
+      "target_id": "skill_python",
+      "type": "REQUIRES_SKILL",
+      "importance": "CORE",
+      "provenance": [
+        {
+          "source_id": "source_synthetic",
+          "evidence": "The demonstration assigns Python CORE importance only for this fictional role.",
+          "locator": "assertion_703894257cd4d0c53685d893568a0b86",
+          "method": "synthetic"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    },
+    {
+      "id": "assertion_18a26d5090a05572c0f3e39dc41dbd12",
+      "source_id": "companyrole_demo_backend",
+      "target_id": "skill_sql",
+      "type": "REQUIRES_SKILL",
+      "importance": "UNSPECIFIED",
+      "provenance": [
+        {
+          "source_id": "source_synthetic",
+          "evidence": "The demonstration leaves SQL importance unspecified to exercise explicit unknown categorization.",
+          "locator": "assertion_18a26d5090a05572c0f3e39dc41dbd12",
+          "method": "synthetic"
+        }
+      ],
+      "validated_at": "2026-10-01T09:00:00Z"
+    }
+  ]
+}

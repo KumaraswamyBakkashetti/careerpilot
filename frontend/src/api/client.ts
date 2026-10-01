@@ -27,6 +27,25 @@ export class ApiClient {
     signal?: AbortSignal,
     acceptedStatuses: readonly number[] = [200],
   ): Promise<ApiResult> {
+    return this.send(
+      "GET",
+      path,
+      undefined,
+      undefined,
+      signal,
+      acceptedStatuses,
+    );
+  }
+
+  async send(
+    method: "GET" | "POST" | "PUT" | "DELETE",
+    path: string,
+    requestBody?: BodyInit,
+    token?: string,
+    signal?: AbortSignal,
+    acceptedStatuses: readonly number[] = [200],
+    contentType?: string,
+  ): Promise<ApiResult> {
     const controller = new AbortController();
     const abort = () => controller.abort();
     signal?.addEventListener("abort", abort, { once: true });
@@ -38,17 +57,25 @@ export class ApiClient {
     }, this.timeoutMs);
     const requestId = crypto.randomUUID();
     try {
+      const headers: Record<string, string> = {
+        Accept: "application/json",
+        "X-Request-ID": requestId,
+      };
+      if (token) headers.Authorization = `Bearer ${token}`;
+      if (contentType) headers["Content-Type"] = contentType;
       const response = await fetch(
         `${this.baseUrl.replace(/\/$/, "")}${path}`,
         {
+          method,
+          body: requestBody,
           signal: controller.signal,
-          headers: { Accept: "application/json", "X-Request-ID": requestId },
+          headers,
           credentials: "omit",
         },
       );
-      let body: unknown;
+      let responseBody: unknown;
       try {
-        body = await response.json();
+        responseBody = await response.json();
       } catch (error) {
         if (controller.signal.aborted) throw error;
         throw new ApiError(
@@ -61,8 +88,10 @@ export class ApiClient {
       const returnedId = response.headers.get("X-Request-ID") || requestId;
       if (!acceptedStatuses.includes(response.status)) {
         const error =
-          typeof body === "object" && body !== null && "error" in body
-            ? body.error
+          typeof responseBody === "object" &&
+          responseBody !== null &&
+          "error" in responseBody
+            ? responseBody.error
             : null;
         const code =
           typeof error === "object" &&
@@ -79,7 +108,11 @@ export class ApiClient {
           returnedId,
         );
       }
-      return { status: response.status, body, requestId: returnedId };
+      return {
+        status: response.status,
+        body: responseBody,
+        requestId: returnedId,
+      };
     } catch (error) {
       if (error instanceof ApiError) throw error;
       if (timedOut)

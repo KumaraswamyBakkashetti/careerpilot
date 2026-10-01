@@ -55,6 +55,8 @@ def production_settings(**overrides: object) -> Settings:
         neo4j_user="careerpilot",
         neo4j_password="test-only-password",
         cors_origins=["https://careerpilot.example"],
+        jwt_secret="a" * 32,
+        resume_storage_root="C:/private/careerpilot-resumes",
     )
     values.update(overrides)
     return Settings(_env_file=None, **values)

@@ -34,9 +34,9 @@ it("renders accessible loading state", () => {
   );
   render(<App />);
   expect(
-    screen.getByRole("heading", { name: /A dependable start/ }),
+    screen.getByRole("heading", { name: /Evidence first/ }),
   ).toBeInTheDocument();
-  expect(screen.getByRole("status")).toHaveTextContent("Checking");
+  expect(screen.getAllByRole("status")[0]).toHaveTextContent("Checking");
   expect(screen.getByRole("button", { name: /Refresh/ })).toBeDisabled();
 });
 it("displays successful connectivity and refreshes", async () => {
@@ -48,7 +48,7 @@ it("displays successful connectivity and refreshes", async () => {
   ).toBeInTheDocument();
   expect(screen.getAllByText("Available")).toHaveLength(3);
   fireEvent.click(screen.getByRole("button", { name: /Refresh/ }));
-  await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(4));
+  await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(5));
 });
 it("distinguishes dependency outage from backend outage", async () => {
   vi.stubGlobal("fetch", healthyFetch("up", "down"));

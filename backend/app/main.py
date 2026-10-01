@@ -20,12 +20,25 @@ from app.core.errors import (
 )
 from app.core.logging import configure_logging
 from app.core.middleware import RequestContextMiddleware, SanitizedErrorsMiddleware
+from app.infrastructure.knowledge import Neo4jKnowledgeRepository
 from app.infrastructure.mongodb import MongoDBAdapter
 from app.infrastructure.neo4j import Neo4jAdapter
+from app.infrastructure.student import MongoStudentRepository
+from app.modules.knowledge.repository import KnowledgeRepository
+from app.modules.knowledge.routes import router as knowledge_router
+from app.modules.knowledge.service import KnowledgeService
+from app.modules.student.repository import StudentRepository
+from app.modules.student.routes import router as student_router
+from app.modules.student.service import StudentService
+from app.modules.student.storage import LocalResumeStorage
 
 
 def create_app(
-    settings: Settings | None = None, dependencies: dict[str, Dependency] | None = None
+    settings: Settings | None = None,
+    dependencies: dict[str, Dependency] | None = None,
+    knowledge_repository: KnowledgeRepository | None = None,
+    student_repository: StudentRepository | None = None,
+    resume_storage: LocalResumeStorage | None = None,
 ) -> FastAPI:
     config = settings if settings is not None else Settings()
     configure_logging(config.log_level)
@@ -66,6 +79,38 @@ def create_app(
                 stack.push_async_callback(shutdown, name, dependency)
             await asyncio.gather(*(initialize(name, dep) for name, dep in resources.items()))
             application.state.health = HealthService(resources, config.dependency_timeout_seconds)
+            neo = resources["neo4j"]
+            repository = (
+                knowledge_repository
+                if knowledge_repository is not None
+                else Neo4jKnowledgeRepository(
+                    neo if isinstance(neo, Neo4jAdapter) else Neo4jAdapter(config)
+                )
+            )
+            application.state.knowledge = KnowledgeService(repository)
+            mongo = resources["mongodb"]
+            student_repo = (
+                student_repository
+                if student_repository is not None
+                else MongoStudentRepository(
+                    mongo if isinstance(mongo, MongoDBAdapter) else MongoDBAdapter(config)
+                )
+            )
+            student = StudentService(
+                config,
+                student_repo,
+                repository,
+                resume_storage or LocalResumeStorage(config.resume_storage_root),
+            )
+            if student_repository is not None or isinstance(mongo, MongoDBAdapter):
+                try:
+                    await student.initialize()
+                except Exception as exc:
+                    logger.warning(
+                        "student_initialization_failed",
+                        extra={"dependency": "mongodb", "category": type(exc).__name__},
+                    )
+            application.state.student = student
             # Probe at startup, but preserve liveness even during dependency outages.
             await application.state.health.readiness()
             logger.info("application_started")
@@ -77,9 +122,9 @@ def create_app(
 
     application = FastAPI(
         title="CareerPilot",
-        version="0.1.0",
+        version="0.3.0",
         debug=False,  # Never expose traceback pages, even when local DEBUG is enabled.
-        description="Phase 1 engineering foundation. Business modules are not implemented.",
+        description="Phase 3 private student evidence and deterministic career gap analysis.",
         lifespan=lifespan,
         responses={
             404: {"model": ErrorResponse},
@@ -95,11 +140,13 @@ def create_app(
         CORSMiddleware,
         allow_origins=config.cors_origins,
         allow_credentials=False,
-        allow_methods=["GET", "OPTIONS"],
-        allow_headers=["Content-Type", "X-Request-ID"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
         expose_headers=["X-Request-ID"],
     )
     application.add_middleware(RequestContextMiddleware)
     application.include_router(health_router)
     application.include_router(system_router, prefix=config.api_prefix)
+    application.include_router(knowledge_router, prefix=config.api_prefix)
+    application.include_router(student_router, prefix=config.api_prefix)
     return application

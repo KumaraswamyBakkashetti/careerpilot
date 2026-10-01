@@ -48,6 +48,8 @@ services:
       CP_NEO4J_USER: neo4j
       CP_NEO4J_PASSWORD: ${NEO4J_LOCAL_PASSWORD:?Set NEO4J_LOCAL_PASSWORD in .env}
       CP_NEO4J_DATABASE: neo4j
+      CP_JWT_SECRET: ${CP_JWT_SECRET:?Set CP_JWT_SECRET in .env}
+      CP_RESUME_STORAGE_ROOT: /app/private/resumes
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -62,7 +64,10 @@ services:
       retries: 6
       start_period: 30s
     init: true
+    volumes:
+      - resume_data:/app/private/resumes
     restart: unless-stopped
 volumes:
   mongodb_data:
   neo4j_data:
+  resume_data:
