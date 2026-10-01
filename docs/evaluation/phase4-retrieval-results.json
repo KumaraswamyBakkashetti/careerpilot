@@ -1,0 +1,483 @@
+{
+  "dataset_version": "careerpilot-retrieval-eval-v1",
+  "case_count": 12,
+  "label_policy": "Manual labels derived from the reviewed canonical resource-to-skill assertions; no embedding model generated labels.",
+  "knowledge_dataset_version": "careerpilot-knowledge-v1",
+  "corpus_version": "careerpilot-knowledge-v1-resources-v1",
+  "experiments": [
+    {
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "dimension": 384,
+      "chunk_size": 420,
+      "chunk_overlap": 40,
+      "chunk_count": 21,
+      "index_size_bytes": 47641,
+      "embedding_duration_ms": 7140.896,
+      "index_build_duration_ms": 7146.032,
+      "top_k": {
+        "3": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.916667,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 1.0,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 6.674,
+            "p95": 8.358
+          },
+          "hybrid_latency_ms": {
+            "median": 6.122,
+            "p95": 7.344
+          }
+        },
+        "5": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.8,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.95,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 7.969,
+            "p95": 8.837
+          },
+          "hybrid_latency_ms": {
+            "median": 7.948,
+            "p95": 8.588
+          }
+        },
+        "10": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.441667,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.525,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 5.648,
+            "p95": 8.077
+          },
+          "hybrid_latency_ms": {
+            "median": 5.669,
+            "p95": 8.226
+          }
+        }
+      }
+    },
+    {
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "dimension": 384,
+      "chunk_size": 900,
+      "chunk_overlap": 120,
+      "chunk_count": 21,
+      "index_size_bytes": 47640,
+      "embedding_duration_ms": 988.916,
+      "index_build_duration_ms": 992.857,
+      "top_k": {
+        "3": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.916667,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 1.0,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 6.344,
+            "p95": 7.907
+          },
+          "hybrid_latency_ms": {
+            "median": 5.941,
+            "p95": 8.023
+          }
+        },
+        "5": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.8,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.95,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 7.21,
+            "p95": 9.211
+          },
+          "hybrid_latency_ms": {
+            "median": 5.959,
+            "p95": 8.226
+          }
+        },
+        "10": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.441667,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.525,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 8.427,
+            "p95": 8.67
+          },
+          "hybrid_latency_ms": {
+            "median": 7.82,
+            "p95": 8.867
+          }
+        }
+      }
+    },
+    {
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "dimension": 384,
+      "chunk_size": 1400,
+      "chunk_overlap": 160,
+      "chunk_count": 21,
+      "index_size_bytes": 47641,
+      "embedding_duration_ms": 925.296,
+      "index_build_duration_ms": 929.074,
+      "top_k": {
+        "3": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.916667,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 1.0,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 7.015,
+            "p95": 7.92
+          },
+          "hybrid_latency_ms": {
+            "median": 6.486,
+            "p95": 7.842
+          }
+        },
+        "5": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.8,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.95,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 5.626,
+            "p95": 8.431
+          },
+          "hybrid_latency_ms": {
+            "median": 5.779,
+            "p95": 8.164
+          }
+        },
+        "10": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.441667,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.525,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 5.805,
+            "p95": 8.684
+          },
+          "hybrid_latency_ms": {
+            "median": 5.714,
+            "p95": 7.676
+          }
+        }
+      }
+    },
+    {
+      "model": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
+      "model_revision": "b207367332321f8e44f96e224ef15bc607f4dbf0",
+      "dimension": 384,
+      "chunk_size": 420,
+      "chunk_overlap": 40,
+      "chunk_count": 21,
+      "index_size_bytes": 47648,
+      "embedding_duration_ms": 952.117,
+      "index_build_duration_ms": 955.425,
+      "top_k": {
+        "3": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.944444,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 1.0,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 6.112,
+            "p95": 8.586
+          },
+          "hybrid_latency_ms": {
+            "median": 6.006,
+            "p95": 7.967
+          }
+        },
+        "5": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.75,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.95,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 6.724,
+            "p95": 8.069
+          },
+          "hybrid_latency_ms": {
+            "median": 6.706,
+            "p95": 9.153
+          }
+        },
+        "10": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.45,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.525,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 6.734,
+            "p95": 8.387
+          },
+          "hybrid_latency_ms": {
+            "median": 6.578,
+            "p95": 7.955
+          }
+        }
+      }
+    },
+    {
+      "model": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
+      "model_revision": "b207367332321f8e44f96e224ef15bc607f4dbf0",
+      "dimension": 384,
+      "chunk_size": 900,
+      "chunk_overlap": 120,
+      "chunk_count": 21,
+      "index_size_bytes": 47649,
+      "embedding_duration_ms": 947.931,
+      "index_build_duration_ms": 952.583,
+      "top_k": {
+        "3": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.944444,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 1.0,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 5.407,
+            "p95": 7.938
+          },
+          "hybrid_latency_ms": {
+            "median": 5.355,
+            "p95": 7.173
+          }
+        },
+        "5": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.75,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.95,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 5.729,
+            "p95": 8.071
+          },
+          "hybrid_latency_ms": {
+            "median": 5.865,
+            "p95": 7.865
+          }
+        },
+        "10": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.45,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.525,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 5.76,
+            "p95": 8.367
+          },
+          "hybrid_latency_ms": {
+            "median": 5.742,
+            "p95": 7.902
+          }
+        }
+      }
+    },
+    {
+      "model": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
+      "model_revision": "b207367332321f8e44f96e224ef15bc607f4dbf0",
+      "dimension": 384,
+      "chunk_size": 1400,
+      "chunk_overlap": 160,
+      "chunk_count": 21,
+      "index_size_bytes": 47650,
+      "embedding_duration_ms": 942.108,
+      "index_build_duration_ms": 945.292,
+      "top_k": {
+        "3": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.944444,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 1.0,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 5.766,
+            "p95": 7.921
+          },
+          "hybrid_latency_ms": {
+            "median": 5.67,
+            "p95": 7.906
+          }
+        },
+        "5": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.75,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.95,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 7.217,
+            "p95": 9.524
+          },
+          "hybrid_latency_ms": {
+            "median": 7.527,
+            "p95": 10.558
+          }
+        },
+        "10": {
+          "VECTOR_ONLY": {
+            "precision_at_k": 0.45,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "GRAPH_THEN_VECTOR": {
+            "precision_at_k": 0.525,
+            "recall_at_k": 1.0,
+            "mrr": 1.0,
+            "hit_rate_at_k": 1.0
+          },
+          "vector_latency_ms": {
+            "median": 6.168,
+            "p95": 7.074
+          },
+          "hybrid_latency_ms": {
+            "median": 6.123,
+            "p95": 6.706
+          }
+        }
+      }
+    }
+  ]
+}

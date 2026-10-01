@@ -4,7 +4,7 @@
 
 CareerPilot is a placement-preparation and career-mentoring system. Its planned capabilities combine persistent student profiles, resume evidence, career-domain knowledge, graph/vector retrieval, agent orchestration, and evidence-backed preparation workflows. KA-RAG informs the research direction; this repository does not implement the paper or claim its results.
 
-**Current status: Phase 3 implemented and locally verified.** CareerPilot now has authenticated private profiles, secure PDF/DOCX processing, student-reviewed canonical skill evidence, resume versioning, and deterministic role gap analysis. See [PHASE3_REPORT.md](PHASE3_REPORT.md) for evidence and limits.
+**Current status: Phase 4 implemented and locally verified.** CareerPilot now adds a canonical resource corpus, deterministic chunks, local Sentence Transformer embeddings, integrity-checked FAISS retrieval, graph-guided relevance filtering, typed evidence fusion, deterministic sufficiency and private retrieval traces. No LLM generation is present. See [PHASE4_REPORT.md](PHASE4_REPORT.md) for evidence and limits.
 
 ## Scope and architecture
 
@@ -20,9 +20,11 @@ Infrastructure adapters
        +-- MongoDB: accounts, profiles, resumes, evidence, gap snapshots
        +-- private storage: original PDF/DOCX files
        +-- Neo4j: canonical career knowledge and role requirements
+       +-- FAISS: rebuildable normalized resource-chunk vectors
+       +-- MongoDB: owner-scoped retrieval traces
 ```
 
-Phase 3 retains the Phase 1 platform and Phase 2 graph. It adds short-lived signed JWT identity, Argon2 password hashes, owner-filtered persistence, private resume storage, bounded deterministic extraction, conservative canonical matching, evidence review, and versioned gap snapshots. No LLM, vector store, RAG, roadmap, interview workflow, or proficiency score is implemented.
+Phase 4 retains every earlier boundary and adds evidence retrieval only. Neo4j answers structural questions, FAISS finds semantic passages, MongoDB supplies private gap context and owns trace history. No LLM, roadmap, interview generation, readiness score, arbitrary reranking formula, or student-resume embedding is implemented.
 
 Domain modules will be added when their real use cases arrive; there are no empty placeholder modules. See [architecture](docs/architecture/phase1.md), [ADR-001](docs/architecture/ADR-001-modular-monolith.md), and [API conventions](docs/api-contract.md).
 
@@ -72,6 +74,11 @@ Backend settings use **`CP_`** to avoid machine-wide environment collisions. The
 | `CP_RESUME_MAX_BYTES` | 5 MiB upload limit |
 | `CP_RESUME_MAX_PAGES`, `CP_RESUME_MAX_TEXT_CHARS` | 20 pages and 200,000 extracted characters |
 | `CP_RESUME_STORAGE_ROOT` | Private local storage; Docker uses a named volume |
+| `CP_RETRIEVAL_INDEX_ROOT` | Private derived FAISS artifact root; never web-served |
+| `CP_RETRIEVAL_EMBEDDING_MODEL`, `CP_RETRIEVAL_EMBEDDING_REVISION` | Local model ID and immutable revision |
+| `CP_RETRIEVAL_EMBEDDING_DIMENSION` | Required manifest/vector dimension; 384 |
+| `CP_RETRIEVAL_CHUNK_SIZE`, `CP_RETRIEVAL_CHUNK_OVERLAP` | Versioned deterministic chunk configuration; 420/40 |
+| `CP_RETRIEVAL_TOP_K`, `CP_RETRIEVAL_MAX_TOP_K` | Default and hard retrieval limits; 3/20 |
 | `NEO4J_LOCAL_PASSWORD` | Required Compose development credential |
 | `MONGODB_PORT`, `NEO4J_BOLT_PORT`, `NEO4J_HTTP_PORT` | Optional published development database ports |
 | `VITE_API_BASE_URL` | Empty = same-origin; set public API origin for separate deployments |
@@ -153,6 +160,35 @@ Uploads use multipart field `file`. Matching PDF and DOCX signatures, MIME types
 Extraction is synchronous and deterministic. PDF and DOCX text retain useful line and section context; image-only PDFs require OCR and fail explicitly because OCR is outside Phase 3. Exact canonical names and curated aliases normalize through live Neo4j reads. Unknown mentions remain unresolved until rejected or corrected to a backend-validated canonical skill. Gap results use direct evidence only and label requirements `SUPPORTED`, `PARTIALLY_SUPPORTED`, or `UNVERIFIED`; they never infer proficiency.
 
 Deleting a resume removes the private file, processing run, and derived evidence and tombstones its metadata. Historical gap snapshots remain for audit, without restoring deleted evidence text. Full account deletion is not implemented. The complete design is in [student evidence architecture](docs/architecture/student-evidence.md) and [ADR-005](docs/architecture/ADR-005-student-evidence-boundary.md).
+
+## Hybrid retrieval setup
+
+Build the derived index after installing backend dependencies and whenever the canonical corpus, embedding revision, dimension, or chunking configuration changes:
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe -m app.modules.retrieval.cli build
+```
+
+For the optional Docker backend, populate its named index/model volumes once with the same controlled CLI before starting the app profile:
+
+```powershell
+docker compose --profile app run --rm backend python -m app.modules.retrieval.cli build
+docker compose --profile app up -d --wait
+```
+
+The selected v1 artifact contains 4 canonical resources and 21 chunks in an integrity-checked normalized-cosine `IndexFlatIP`. The API loads it only when its manifest matches the current model revision, dimension, corpus hash and chunking configuration. A missing, corrupt or stale index fails explicitly; it is never silently searched. Builds stage a new artifact and atomically switch the active pointer. There is no public rebuild endpoint.
+
+Authenticated retrieval routes provide role requirements, skill passages, gap evidence and owner-filtered traces. In the student workspace, run a gap analysis and select **Retrieve evidence** to inspect graph evidence separately from learning passages and their sources.
+
+Run the controlled experiment (downloads public model weights on first use):
+
+```powershell
+cd ..
+.\backend\.venv\Scripts\python.exe scripts\evaluate-phase4.py
+```
+
+The labelled dataset is [backend/retrieval_data/evaluation-v1.json](backend/retrieval_data/evaluation-v1.json); generated results are [JSON](docs/evaluation/phase4-retrieval-results.json) and [Markdown](docs/evaluation/phase4-retrieval-results.md). Full design and failure semantics are in [hybrid retrieval architecture](docs/architecture/hybrid-retrieval.md) and [ADR-006](docs/architecture/ADR-006-hybrid-retrieval-baseline.md).
 
 ## Frontend startup
 

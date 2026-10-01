@@ -6,7 +6,9 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY app ./app
 COPY knowledge_data ./knowledge_data
-RUN useradd --create-home --uid 10001 careerpilot && mkdir -p /app/private/resumes && chown -R careerpilot:careerpilot /app/private
+RUN useradd --create-home --uid 10001 careerpilot \
+    && mkdir -p /app/private/resumes /app/private/retrieval-index /app/private/model-cache \
+    && chown -R careerpilot:careerpilot /app/private
 USER careerpilot
 ENV PATH="/app/backend/.venv/bin:$PATH"
 EXPOSE 8000

@@ -4,6 +4,8 @@
 !.env.*.example
 .venv/
 .tools/
+.uv-cache/
+.hf-cache/
 __pycache__/
 *.py[cod]
 .pytest_cache/

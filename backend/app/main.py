@@ -2,6 +2,7 @@ import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import AsyncExitStack, asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
@@ -23,14 +24,23 @@ from app.core.middleware import RequestContextMiddleware, SanitizedErrorsMiddlew
 from app.infrastructure.knowledge import Neo4jKnowledgeRepository
 from app.infrastructure.mongodb import MongoDBAdapter
 from app.infrastructure.neo4j import Neo4jAdapter
+from app.infrastructure.retrieval_index import FaissIndexStore
+from app.infrastructure.retrieval_trace import MongoRetrievalTraceRepository
 from app.infrastructure.student import MongoStudentRepository
 from app.modules.knowledge.repository import KnowledgeRepository
 from app.modules.knowledge.routes import router as knowledge_router
 from app.modules.knowledge.service import KnowledgeService
+from app.modules.retrieval.corpus import corpus_fingerprint, load_corpus
+from app.modules.retrieval.embedding import SentenceTransformerEmbeddingProvider
+from app.modules.retrieval.repository import InMemoryRetrievalTraceRepository
+from app.modules.retrieval.routes import router as retrieval_router
+from app.modules.retrieval.service import RetrievalService
 from app.modules.student.repository import StudentRepository
 from app.modules.student.routes import router as student_router
 from app.modules.student.service import StudentService
 from app.modules.student.storage import LocalResumeStorage
+
+KNOWLEDGE_ROOT = Path(__file__).resolve().parents[1] / "knowledge_data"
 
 
 def create_app(
@@ -39,6 +49,7 @@ def create_app(
     knowledge_repository: KnowledgeRepository | None = None,
     student_repository: StudentRepository | None = None,
     resume_storage: LocalResumeStorage | None = None,
+    retrieval_service: RetrievalService | None = None,
 ) -> FastAPI:
     config = settings if settings is not None else Settings()
     configure_logging(config.log_level)
@@ -111,6 +122,49 @@ def create_app(
                         extra={"dependency": "mongodb", "category": type(exc).__name__},
                     )
             application.state.student = student
+            if retrieval_service is None:
+                embedding = SentenceTransformerEmbeddingProvider(
+                    config.retrieval_embedding_model,
+                    config.retrieval_embedding_revision,
+                    config.retrieval_embedding_dimension,
+                )
+                index = FaissIndexStore(config.retrieval_index_root, embedding)
+                try:
+                    knowledge_version, corpus = load_corpus(KNOWLEDGE_ROOT)
+                    index.load(
+                        knowledge_version,
+                        corpus[0].corpus_version,
+                        corpus_fingerprint(corpus),
+                        config.retrieval_chunk_size,
+                        config.retrieval_chunk_overlap,
+                    )
+                except Exception as exc:
+                    logger.warning(
+                        "retrieval_index_unavailable", extra={"category": type(exc).__name__}
+                    )
+                trace_repository = (
+                    MongoRetrievalTraceRepository(mongo)
+                    if isinstance(mongo, MongoDBAdapter)
+                    else InMemoryRetrievalTraceRepository()
+                )
+                retrieval = RetrievalService(
+                    repository,
+                    student_repo,
+                    trace_repository,
+                    index,
+                    config.retrieval_top_k,
+                    config.retrieval_max_top_k,
+                )
+            else:
+                retrieval = retrieval_service
+            try:
+                await retrieval.initialize()
+            except Exception as exc:
+                logger.warning(
+                    "retrieval_initialization_failed",
+                    extra={"dependency": "mongodb", "category": type(exc).__name__},
+                )
+            application.state.retrieval = retrieval
             # Probe at startup, but preserve liveness even during dependency outages.
             await application.state.health.readiness()
             logger.info("application_started")
@@ -122,9 +176,9 @@ def create_app(
 
     application = FastAPI(
         title="CareerPilot",
-        version="0.3.0",
+        version="0.4.0",
         debug=False,  # Never expose traceback pages, even when local DEBUG is enabled.
-        description="Phase 3 private student evidence and deterministic career gap analysis.",
+        description="Phase 4 traceable graph-enhanced hybrid evidence retrieval.",
         lifespan=lifespan,
         responses={
             404: {"model": ErrorResponse},
@@ -149,4 +203,5 @@ def create_app(
     application.include_router(system_router, prefix=config.api_prefix)
     application.include_router(knowledge_router, prefix=config.api_prefix)
     application.include_router(student_router, prefix=config.api_prefix)
+    application.include_router(retrieval_router, prefix=config.api_prefix)
     return application

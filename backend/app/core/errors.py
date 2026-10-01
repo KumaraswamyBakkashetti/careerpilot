@@ -52,6 +52,10 @@ ErrorCode = Literal[
     "INVALID_SKILL_MAPPING",
     "SKILL_NOT_FOUND",
     "GAP_ANALYSIS_NOT_FOUND",
+    "RETRIEVAL_INDEX_UNAVAILABLE",
+    "RETRIEVAL_INDEX_INCOMPATIBLE",
+    "RETRIEVAL_LIMIT_EXCEEDED",
+    "RETRIEVAL_TRACE_NOT_FOUND",
 ]
 
 
@@ -84,6 +88,10 @@ async def application_error_handler(request: Request, exc: Exception) -> JSONRes
         "INVALID_SKILL_MAPPING": (422, "The evidence decision requires a valid canonical skill."),
         "SKILL_NOT_FOUND": (404, "The selected canonical skill does not exist."),
         "GAP_ANALYSIS_NOT_FOUND": (404, "The requested gap analysis does not exist."),
+        "RETRIEVAL_INDEX_UNAVAILABLE": (503, "The semantic retrieval index is unavailable."),
+        "RETRIEVAL_INDEX_INCOMPATIBLE": (503, "The semantic retrieval index is stale."),
+        "RETRIEVAL_LIMIT_EXCEEDED": (422, "The requested retrieval limit is too large."),
+        "RETRIEVAL_TRACE_NOT_FOUND": (404, "The requested retrieval trace does not exist."),
     }
     status, message = statuses[exc.code]
     return error_response(status, exc.code, message)

@@ -37,6 +37,14 @@ class Settings(BaseSettings):
     resume_max_pages: int = Field(default=20, ge=1, le=100)
     resume_max_text_chars: int = Field(default=200_000, ge=1000, le=1_000_000)
     resume_storage_root: Path = Path(__file__).resolve().parents[3] / "uploads" / "resumes"
+    retrieval_index_root: Path = Path(__file__).resolve().parents[3] / "indexes" / "retrieval"
+    retrieval_embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    retrieval_embedding_revision: str = "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+    retrieval_embedding_dimension: int = Field(default=384, ge=64, le=4096)
+    retrieval_chunk_size: int = Field(default=420, ge=200, le=4000)
+    retrieval_chunk_overlap: int = Field(default=40, ge=0, le=1000)
+    retrieval_top_k: int = Field(default=3, ge=1, le=20)
+    retrieval_max_top_k: int = Field(default=20, ge=1, le=100)
 
     @field_validator("cors_origins")
     @classmethod
@@ -92,6 +100,10 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def production_policy(self) -> Self:
+        if self.retrieval_chunk_overlap >= self.retrieval_chunk_size:
+            raise ValueError("Retrieval chunk overlap must be smaller than chunk size")
+        if self.retrieval_top_k > self.retrieval_max_top_k:
+            raise ValueError("Retrieval top-k exceeds configured maximum")
         if self.app_env == "production":
             required = {
                 "mongodb_uri",

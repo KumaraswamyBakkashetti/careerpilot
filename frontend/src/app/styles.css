@@ -423,6 +423,26 @@ button:disabled {
 .gap-results .unverified {
   color: #687477;
 }
+.retrieval-results {
+  margin-top: 28px;
+  padding: 20px;
+  border: 1px solid #cddbd2;
+  background: #f8faf8;
+}
+.retrieval-results > p,
+.retrieval-results small {
+  color: #61727a;
+  font-size: 11px;
+}
+.retrieval-results section {
+  margin-top: 18px;
+}
+.retrieval-results li {
+  margin-top: 10px;
+}
+.retrieval-results small {
+  display: block;
+}
 .scope-note > span {
   padding-top: 12px;
   white-space: nowrap;

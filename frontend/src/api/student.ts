@@ -38,6 +38,26 @@ export type GapRun = {
   rule_version: string;
   items: GapItem[];
 };
+export type RetrievalBundle = {
+  trace_id: string;
+  retrieval_strategy: string;
+  graph_evidence: Array<{
+    assertion_id: string;
+    entity_name: string;
+    relationship_type: string;
+    importance: string;
+    source_ids: string[];
+  }>;
+  vector_evidence: Array<{
+    chunk_id: string;
+    resource_id: string;
+    source_id: string;
+    text: string;
+    similarity_score: number;
+    metadata: Record<string, string | string[]>;
+  }>;
+  sufficiency: { status: string; reasons: string[] };
+};
 
 const object = (value: unknown): Record<string, unknown> => {
   if (typeof value !== "object" || value === null || Array.isArray(value))
@@ -251,4 +271,25 @@ export async function runGap(
       };
     }),
   };
+}
+
+export async function retrieveGapEvidence(
+  token: string,
+  gapId: string,
+  skillId: string,
+  client: ApiClient = apiClient,
+): Promise<RetrievalBundle> {
+  return object(
+    (
+      await client.send(
+        "POST",
+        `/api/v1/retrieval/gaps/${encodeURIComponent(gapId)}/evidence`,
+        json({ skill_id: skillId }),
+        token,
+        undefined,
+        [200],
+        "application/json",
+      )
+    ).body,
+  ) as RetrievalBundle;
 }

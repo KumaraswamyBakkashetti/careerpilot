@@ -1,0 +1,18 @@
+{
+  "dataset_version": "careerpilot-retrieval-eval-v1",
+  "label_policy": "Manual labels derived from the reviewed canonical resource-to-skill assertions; no embedding model generated labels.",
+  "cases": [
+    {"query_id":"q01","task":"SKILL_RESOURCES","query":"learn Python list and dictionary operations","skill_id":"skill_python","expected_resource_ids":["resource_python"],"notes":"Python collections"},
+    {"query_id":"q02","task":"SKILL_RESOURCES","query":"iterate over Python data structures","skill_id":"skill_python","expected_resource_ids":["resource_python"],"notes":"Python iteration"},
+    {"query_id":"q03","task":"SKILL_RESOURCES","query":"official Python collection tutorial","skill_id":"skill_python","expected_resource_ids":["resource_python"],"notes":"Python documentation"},
+    {"query_id":"q04","task":"SKILL_RESOURCES","query":"SQL query rows and join tables","skill_id":"skill_sql","expected_resource_ids":["resource_postgres"],"notes":"SQL joins"},
+    {"query_id":"q05","task":"SKILL_RESOURCES","query":"PostgreSQL relational tables and aggregates","skill_id":"skill_postgresql","expected_resource_ids":["resource_postgres"],"notes":"PostgreSQL tutorial"},
+    {"query_id":"q06","task":"SKILL_RESOURCES","query":"practice explicit SQL join conditions","skill_id":"skill_sql_joins","expected_resource_ids":["resource_postgres"],"notes":"SQL join skill"},
+    {"query_id":"q07","task":"SKILL_RESOURCES","query":"semantic HTML web page structure","skill_id":"skill_html","expected_resource_ids":["resource_mdn"],"notes":"HTML module"},
+    {"query_id":"q08","task":"SKILL_RESOURCES","query":"CSS layout and styling fundamentals","skill_id":"skill_css","expected_resource_ids":["resource_mdn"],"notes":"CSS module"},
+    {"query_id":"q09","task":"SKILL_RESOURCES","query":"JavaScript core web development module","skill_id":"skill_javascript","expected_resource_ids":["resource_mdn"],"notes":"JavaScript module"},
+    {"query_id":"q10","task":"SKILL_RESOURCES","query":"pytest assertion failure introspection","skill_id":"skill_pytest","expected_resource_ids":["resource_pytest"],"notes":"pytest assertions"},
+    {"query_id":"q11","task":"SKILL_RESOURCES","query":"check expected exceptions in Python tests","skill_id":"skill_testing","expected_resource_ids":["resource_pytest"],"notes":"Testing exceptions"},
+    {"query_id":"q12","task":"SKILL_RESOURCES","query":"automated test assertions and expected outcomes","skill_id":"skill_testing","expected_resource_ids":["resource_pytest"],"notes":"Software testing"}
+  ]
+}

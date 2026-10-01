@@ -2,6 +2,7 @@
 
 import asyncio
 import os
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
@@ -212,6 +213,38 @@ def test_real_private_resume_cross_store_workflow_and_ownership() -> None:
         assert (
             client.get(f"/api/v1/student/gap-analyses/{run['run_id']}", headers=other).status_code
             == 404
+        )
+
+        retrieval = client.post(
+            f"/api/v1/retrieval/gaps/{run['run_id']}/evidence",
+            headers=owner,
+            json={"skill_id": "skill_python"},
+        )
+        assert retrieval.status_code == 200, retrieval.text
+        bundle = retrieval.json()
+        assert bundle["retrieval_strategy"] == "GRAPH_THEN_VECTOR"
+        assert bundle["sufficiency"]["status"] == "SUFFICIENT"
+        assert bundle["graph_evidence"][0]["relationship_type"] == "TEACHES_SKILL"
+        assert bundle["vector_evidence"][0]["resource_id"] == "resource_python"
+        assert bundle["vector_evidence"][0]["source_id"] == "source_python"
+        assert bundle["gap_context"]["gap_run_id"] == run["run_id"]
+        trace_id = bundle["trace_id"]
+        assert client.get(f"/api/v1/retrieval/traces/{trace_id}", headers=owner).status_code == 200
+        assert client.get(f"/api/v1/retrieval/traces/{trace_id}", headers=other).status_code == 404
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            concurrent = list(
+                pool.map(
+                    lambda _: client.post(
+                        f"/api/v1/retrieval/gaps/{run['run_id']}/evidence",
+                        headers=owner,
+                        json={"skill_id": "skill_python"},
+                    ),
+                    range(8),
+                )
+            )
+        assert all(response.status_code == 200 for response in concurrent)
+        assert all(
+            response.json()["retrieval_strategy"] == "GRAPH_THEN_VECTOR" for response in concurrent
         )
 
         docx = client.post(

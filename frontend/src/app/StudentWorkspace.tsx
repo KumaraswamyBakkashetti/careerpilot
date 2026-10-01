@@ -8,10 +8,12 @@ import {
   getProfile,
   getResumes,
   runGap,
+  retrieveGapEvidence,
   updateProfile,
   uploadResume,
   type Evidence,
   type GapRun,
+  type RetrievalBundle,
   type Profile,
   type Resume,
 } from "../api/student";
@@ -32,6 +34,7 @@ export function StudentWorkspace() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [gap, setGap] = useState<GapRun | null>(null);
+  const [retrieval, setRetrieval] = useState<RetrievalBundle | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -184,6 +187,18 @@ export function StudentWorkspace() {
       setBusy(false);
     }
   };
+  const retrieve = async (skillId: string) => {
+    if (!gap) return;
+    setBusy(true);
+    setError("");
+    try {
+      setRetrieval(await retrieveGapEvidence(token, gap.run_id, skillId));
+    } catch (failure) {
+      setError(errorMessage(failure));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <section className="student-panel" aria-labelledby="student-title">
@@ -309,9 +324,58 @@ export function StudentWorkspace() {
                       ? "Supported by confirmed direct evidence."
                       : "Direct evidence exists but is not confirmed."}
                 </small>
+                <button disabled={busy} onClick={() => retrieve(item.skill_id)}>
+                  Retrieve evidence
+                </button>
               </li>
             ))}
           </ul>
+        </div>
+      )}
+      {retrieval && (
+        <div className="retrieval-results" aria-live="polite">
+          <h3>Retrieval inspection</h3>
+          <p>
+            {retrieval.retrieval_strategy} · {retrieval.sufficiency.status} ·
+            trace {retrieval.trace_id}
+          </p>
+          <section>
+            <h4>Why this skill matters — graph evidence</h4>
+            {retrieval.graph_evidence.length ? (
+              <ul>
+                {retrieval.graph_evidence.map((item) => (
+                  <li key={item.assertion_id}>
+                    {item.relationship_type} → {item.entity_name} (
+                    {item.importance})
+                    <small>Source: {item.source_ids.join(", ")}</small>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No validated graph relationship available.</p>
+            )}
+          </section>
+          <section>
+            <h4>Learning evidence — resource passages</h4>
+            {retrieval.vector_evidence.length ? (
+              <ul>
+                {retrieval.vector_evidence.map((item) => (
+                  <li key={item.chunk_id}>
+                    <strong>
+                      {String(item.metadata.resource_name ?? item.resource_id)}
+                    </strong>
+                    <p>{item.text}</p>
+                    <small>
+                      Source: {item.source_id} · cosine{" "}
+                      {item.similarity_score.toFixed(3)}
+                    </small>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No validated resource available.</p>
+            )}
+          </section>
         </div>
       )}
       {error && <p role="alert">{error}</p>}

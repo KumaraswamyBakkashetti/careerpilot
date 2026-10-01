@@ -94,7 +94,7 @@ it("runs the visible auth, evidence review, role and gap workflow", async () => 
         body = [resume];
       } else if (url.includes("/evidence/") && method === "PUT") {
         body = { ...evidence, verification_status: "CONFIRMED" };
-      } else if (url.endsWith("/evidence")) {
+      } else if (url.endsWith("/evidence") && !url.includes("/retrieval/")) {
         body = [evidence];
       } else if (url.endsWith("/gap-analyses")) {
         status = 201;
@@ -112,6 +112,35 @@ it("runs the visible auth, evidence review, role and gap workflow", async () => 
               reason_code: "CONFIRMED_DIRECT_EVIDENCE",
             },
           ],
+        };
+      } else if (url.includes("/retrieval/gaps/")) {
+        body = {
+          task: "GAP_RESOURCES",
+          retrieval_strategy: "GRAPH_THEN_VECTOR",
+          graph_evidence: [
+            {
+              assertion_id: "assertion_0123456789abcdef0123456789abcdef",
+              entity_name: "Python data structures tutorial",
+              relationship_type: "TEACHES_SKILL",
+              importance: "UNSPECIFIED",
+              source_ids: ["source_python"],
+            },
+          ],
+          vector_evidence: [
+            {
+              chunk_id: "chunk_0123456789abcdef0123456789abcdef",
+              resource_id: "resource_python",
+              source_id: "source_python",
+              text: "Python lists and dictionaries support collection operations.",
+              similarity_score: 0.91,
+              metadata: { resource_name: "Python data structures tutorial" },
+            },
+          ],
+          sufficiency: {
+            status: "SUFFICIENT",
+            reasons: ["REQUIRED_EVIDENCE_PRESENT"],
+          },
+          trace_id: "trace_0123456789abcdef0123456789abcdef",
         };
       } else {
         throw new Error(`Unexpected request: ${method} ${url}`);
@@ -161,4 +190,9 @@ it("runs the visible auth, evidence review, role and gap workflow", async () => 
   expect(
     screen.getByText("Supported by confirmed direct evidence."),
   ).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Retrieve evidence" }));
+  expect(await screen.findByText("Retrieval inspection")).toBeInTheDocument();
+  expect(screen.getByText(/Why this skill matters/)).toBeInTheDocument();
+  expect(screen.getByText(/Python lists and dictionaries/)).toBeInTheDocument();
+  expect(screen.getAllByText(/source_python/)).toHaveLength(2);
 });

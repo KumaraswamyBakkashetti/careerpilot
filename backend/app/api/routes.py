@@ -36,8 +36,8 @@ class SystemResponse(BaseModel):
     subtitle: str = (
         "A Multi-Agent Placement Intelligence System Using Knowledge Graph-Enhanced Agentic RAG"
     )
-    phase: Literal[3] = 3
-    version: str = "0.3.0"
+    phase: Literal[4] = 4
+    version: str = "0.4.0"
 
 
 @system_router.get("/system", response_model=SystemResponse, summary="Foundation metadata")
