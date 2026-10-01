@@ -1,0 +1,13 @@
+# Use only with: docker compose -p careerpilot-integration -f compose.yaml -f compose.test.yaml
+services:
+  mongodb:
+    ports: !override ["127.0.0.1:27617:27017"]
+    restart: "no"
+  neo4j:
+    ports: !override ["127.0.0.1:7767:7687", "127.0.0.1:7744:7474"]
+    restart: "no"
+  backend:
+    ports: !override ["127.0.0.1:8001:8000"]
+    environment:
+      CP_MONGODB_DATABASE: careerpilot_test
+    restart: "no"

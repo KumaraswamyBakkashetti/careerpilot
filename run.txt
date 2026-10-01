@@ -1,0 +1,27 @@
+start docker 
+
+
+cd /d "C:\Users\KumaraswamyBakkashet\OneDrive - Zeta Global\Documents\CareerPilot"
+docker compose up -d --wait --wait-timeout 240
+docker compose ps
+
+
+backend
+
+
+cd /d "C:\Users\KumaraswamyBakkashet\OneDrive - Zeta Global\Documents\CareerPilot\backend"
+..\.tools\uv.exe run --frozen python -m app
+
+
+frontend
+
+
+cd /d "C:\Users\KumaraswamyBakkashet\OneDrive - Zeta Global\Documents\CareerPilot\frontend"
+npm.cmd run dev
+
+
+stop docker
+
+
+cd /d "C:\Users\KumaraswamyBakkashet\OneDrive - Zeta Global\Documents\CareerPilot"
+docker compose down

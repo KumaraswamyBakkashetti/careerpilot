@@ -1,0 +1,40 @@
+name: Foundation quality
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.12.21'
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: uv sync --project backend --frozen
+      - run: npm ci
+        working-directory: frontend
+      - run: pwsh -File scripts/check.ps1
+      - name: Isolated integration services
+        id: integration_services
+        shell: bash
+        run: |
+          echo "NEO4J_LOCAL_PASSWORD=$(openssl rand -hex 24)" > .env
+          docker compose -p careerpilot-integration -f compose.yaml -f compose.test.yaml up -d --wait --wait-timeout 240
+      - name: Real adapter integration
+        shell: bash
+        run: |
+          set -a
+          source .env
+          set +a
+          export CP_RUN_INTEGRATION=1 TEST_NEO4J_PASSWORD="$NEO4J_LOCAL_PASSWORD"
+          cd backend
+          uv run --frozen pytest -q -m integration
+      - name: Cleanup isolated services
+        if: always() && steps.integration_services.outcome != 'skipped'
+        run: docker compose -p careerpilot-integration -f compose.yaml -f compose.test.yaml down --volumes

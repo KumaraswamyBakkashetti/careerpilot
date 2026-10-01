@@ -1,0 +1,264 @@
+:root {
+  font-family: Inter, "Segoe UI", sans-serif;
+  color: #18323c;
+  background: #f5f6f2;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #17695c;
+  outline-offset: 5px;
+}
+.shell {
+  max-width: 1080px;
+  margin: auto;
+  padding: 0 40px;
+}
+.topbar {
+  height: 105px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #dce2dc;
+}
+.brand {
+  text-decoration: none;
+  color: inherit;
+  font-size: 25px;
+  font-weight: 750;
+  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.brand-dot {
+  width: 8px;
+  height: 8px;
+  background: #21765f;
+  border-radius: 50%;
+}
+.phase-tag {
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  padding: 8px 12px;
+  border: 1px solid #ced9d2;
+  border-radius: 4px;
+  color: #3c6458;
+}
+main {
+  padding-top: 65px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: #466f60;
+  margin: 0 0 16px;
+}
+h1 {
+  font-size: clamp(38px, 5.5vw, 62px);
+  letter-spacing: -2.5px;
+  line-height: 1.12;
+  font-weight: 600;
+  margin: 0 0 23px;
+}
+h1 span {
+  color: #59766c;
+}
+.intro {
+  max-width: 570px;
+  color: #536871;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0 0 40px;
+}
+.status-panel {
+  background: white;
+  border: 1px solid #d8e1d9;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 35px #18323c04;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26px 28px;
+  gap: 20px;
+}
+.panel-header .eyebrow {
+  margin-bottom: 8px;
+}
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  margin: 0;
+}
+button {
+  background: #f3f7f3;
+  border: 1px solid #d4dfd6;
+  color: #285f4e;
+  padding: 11px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+button span {
+  margin-left: 10px;
+}
+button:hover {
+  background: #e5eee5;
+}
+button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+.health-message {
+  background: #eff4f0;
+  border-block: 1px solid #e0e8e0;
+  margin: 0;
+  padding: 13px 28px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #395b4e;
+}
+.service-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 28px;
+}
+.service-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 0;
+  border-bottom: 1px solid #ebeeea;
+}
+.service-list li:last-child {
+  border-bottom: 0;
+}
+.service-list h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 5px;
+}
+.service-list p {
+  margin: 0;
+  color: #61727a;
+  font-size: 12px;
+}
+.service-state {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.state-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.available {
+  color: #277653;
+}
+.unavailable {
+  color: #9a402f;
+}
+.checking,
+.unknown {
+  color: #657078;
+}
+.panel-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-top: 1px solid #ebeeea;
+  background: #fbfcfa;
+  padding: 14px 28px;
+  font-size: 10px;
+  color: #677870;
+}
+.panel-footer code {
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+.scope-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  max-width: 700px;
+  margin: 28px 0 65px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #65736f;
+}
+.scope-note > span {
+  padding-top: 12px;
+  white-space: nowrap;
+  color: #3f6556;
+  font-weight: 600;
+}
+footer {
+  border-top: 1px solid #dce2dc;
+  padding: 24px 0 30px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #697970;
+}
+footer > span {
+  letter-spacing: 0.4px;
+}
+@media (max-width: 600px) {
+  .shell {
+    padding: 0 22px;
+  }
+  .topbar {
+    height: 80px;
+  }
+  main {
+    padding-top: 42px;
+  }
+  h1 {
+    letter-spacing: -1.5px;
+  }
+  .panel-header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 22px;
+  }
+  .health-message {
+    padding: 13px 22px;
+  }
+  .service-list {
+    padding: 0 22px;
+  }
+  .panel-footer {
+    padding: 14px 22px;
+  }
+  .scope-note {
+    margin-bottom: 35px;
+  }
+  footer {
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+}
