@@ -5,7 +5,13 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 PrivateId = Annotated[
-    str, Field(pattern=r"^(student|resume|evidence|gap|processing)_[a-f0-9]{32}$")
+    str,
+    Field(
+        pattern=(
+            r"^(student|resume|evidence|gap|processing|interview|question|evaluation)_"
+            r"[a-f0-9]{32}$"
+        )
+    ),
 ]
 CanonicalId = Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{2,79}$")]
 
@@ -131,15 +137,21 @@ Section = Literal["SKILLS", "PROJECTS", "EXPERIENCE", "EDUCATION", "CERTIFICATIO
 class SkillEvidence(StrictModel):
     evidence_id: PrivateId
     student_id: PrivateId
-    resume_id: PrivateId
+    resume_id: PrivateId | None = None
     raw_text: str = Field(min_length=1, max_length=120)
     section: Section
     evidence_text: str = Field(min_length=1, max_length=500)
     skill_id: CanonicalId | None = None
     skill_name: str | None = None
     normalization_status: NormalizationStatus
-    extraction_method: Literal["DETERMINISTIC_ALIAS_V1"] = "DETERMINISTIC_ALIAS_V1"
+    source_type: Literal["RESUME", "INTERVIEW_PRACTICE"] = "RESUME"
+    extraction_method: Literal["DETERMINISTIC_ALIAS_V1", "INTERVIEW_EVALUATION_V1"] = (
+        "DETERMINISTIC_ALIAS_V1"
+    )
     verification_status: VerificationStatus = "EXTRACTED"
+    interview_session_id: PrivateId | None = None
+    interview_question_id: PrivateId | None = None
+    interview_evaluation_id: PrivateId | None = None
     observed_at: datetime
     created_at: datetime
     updated_at: datetime

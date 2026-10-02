@@ -128,7 +128,7 @@ def test_openapi_and_versioned_api(client: TestClient) -> None:
     assert spec["info"]["title"] == "CareerPilot"
     assert "503" in spec["paths"]["/health/ready"]["get"]["responses"]
     assert client.get("/docs").status_code == 200
-    assert client.get("/api/v1/system").json()["phase"] == 4
+    assert client.get("/api/v1/system").json()["phase"] == 6
     assert client.get("/system").status_code == 404
 
 

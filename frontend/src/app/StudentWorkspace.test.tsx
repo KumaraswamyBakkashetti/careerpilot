@@ -108,8 +108,8 @@ it("runs the visible auth, evidence review, role and gap workflow", async () => 
               skill_id: "skill_python",
               skill_name: "Python",
               importance: "CORE",
-              status: "SUPPORTED",
-              reason_code: "CONFIRMED_DIRECT_EVIDENCE",
+              status: "PARTIALLY_SUPPORTED",
+              reason_code: "UNCONFIRMED_DIRECT_EVIDENCE",
             },
           ],
         };
@@ -141,6 +141,75 @@ it("runs the visible auth, evidence review, role and gap workflow", async () => 
             reasons: ["REQUIRED_EVIDENCE_PRESENT"],
           },
           trace_id: "trace_0123456789abcdef0123456789abcdef",
+        };
+      } else if (url.endsWith("/roadmaps")) {
+        status = 201;
+        body = {
+          roadmap_id: "roadmap_0123456789abcdef0123456789abcdef",
+          version: 1,
+          generated_at: "2026-10-02T00:00:00Z",
+          prompt_version: "roadmap-prompt-v1",
+          model_provider: "groq",
+          model_id: "openai/gpt-oss-120b",
+          retrieval_trace_ids: ["trace_0123456789abcdef0123456789abcdef"],
+          evidence_bundle_version: "evidence-bundle-test",
+          coverage_status: "SUFFICIENT",
+          omitted_skill_ids: [],
+          items: [
+            {
+              item_id: "roadmap_item_0123456789abcdef0123456789abcdef",
+              skill_id: "skill_python",
+              skill_name: "Python",
+              priority: "MEDIUM",
+              reason_code: "PARTIALLY_SUPPORTED_CORE_REQUIREMENT",
+              recommendation:
+                "Strengthen Python through the supplied documentation.",
+              evidence_ids: [
+                "assertion_python",
+                "status_python",
+                "chunk_python",
+              ],
+              resource_ids: ["resource_python"],
+              sequence: 1,
+              suggested_activities: [
+                "Complete the validated collection examples.",
+              ],
+              status: "NOT_STARTED",
+            },
+          ],
+          evidence: [
+            {
+              evidence_id: "assertion_python",
+              evidence_type: "ROLE_REQUIREMENT",
+              skill_id: "skill_python",
+              label: "Python is CORE for the target role.",
+              source_id: "source_curated",
+              resource_id: null,
+              resource_name: null,
+              text: null,
+            },
+            {
+              evidence_id: "status_python",
+              evidence_type: "STUDENT_STATUS",
+              skill_id: "skill_python",
+              label:
+                "CareerPilot has direct evidence that is not fully confirmed.",
+              source_id: "gap_test",
+              resource_id: null,
+              resource_name: null,
+              text: null,
+            },
+            {
+              evidence_id: "chunk_python",
+              evidence_type: "RESOURCE",
+              skill_id: "skill_python",
+              label: "Validated learning resource passage.",
+              source_id: "source_python",
+              resource_id: "resource_python",
+              resource_name: "Python documentation",
+              text: "Python collection examples.",
+            },
+          ],
         };
       } else {
         throw new Error(`Unexpected request: ${method} ${url}`);
@@ -186,13 +255,22 @@ it("runs the visible auth, evidence review, role and gap workflow", async () => 
   fireEvent.click(
     screen.getByRole("button", { name: "Run evidence gap analysis" }),
   );
-  expect(await screen.findByText("SUPPORTED")).toBeInTheDocument();
+  expect(await screen.findByText("PARTIALLY SUPPORTED")).toBeInTheDocument();
   expect(
-    screen.getByText("Supported by confirmed direct evidence."),
+    screen.getByText("Direct evidence exists but is not confirmed."),
   ).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Retrieve evidence" }));
   expect(await screen.findByText("Retrieval inspection")).toBeInTheDocument();
   expect(screen.getByText(/Why this skill matters/)).toBeInTheDocument();
   expect(screen.getByText(/Python lists and dictionaries/)).toBeInTheDocument();
   expect(screen.getAllByText(/source_python/)).toHaveLength(2);
+  fireEvent.click(
+    screen.getByRole("button", { name: "Generate grounded learning roadmap" }),
+  );
+  expect(
+    await screen.findByText("Validated evidence, generated recommendations"),
+  ).toBeInTheDocument();
+  expect(screen.getByText("Requirement · graph fact")).toBeInTheDocument();
+  expect(screen.getByText(/generated synthesis/)).toBeInTheDocument();
+  expect(screen.getByText("Python documentation")).toBeInTheDocument();
 });

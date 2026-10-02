@@ -1,0 +1,5 @@
+[
+  {"case_id":"company-core-python","skill_id":"skill_python","skill_name":"Python","importance":"CORE","student_status":"UNVERIFIED","synthetic":true,"resource":"Python exceptions may be handled with try and except statements."},
+  {"case_id":"company-sql-partial","skill_id":"skill_sql","skill_name":"SQL","importance":"UNSPECIFIED","student_status":"PARTIALLY_SUPPORTED","synthetic":true,"resource":"PostgreSQL SELECT retrieves rows from a table."},
+  {"case_id":"company-sparse","skill_id":"skill_sql","skill_name":"SQL","importance":"UNSPECIFIED","student_status":"UNVERIFIED","synthetic":true,"resource":"Only this narrow validated SQL statement is available; do not infer hiring practices."}
+]

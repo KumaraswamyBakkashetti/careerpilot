@@ -1,0 +1,33 @@
+{
+  "verified_at": "2026-10-02",
+  "provider": "groq",
+  "source": "https://api.groq.com/openai/v1/models",
+  "project_specific": true,
+  "model_count": 11,
+  "configured_model": "openai/gpt-oss-120b",
+  "configured_model_present": true,
+  "models": [
+    {"id": "allam-2-7b", "active": true, "context_window": 4096},
+    {"id": "canopylabs/orpheus-arabic-saudi", "active": true, "context_window": 4000},
+    {"id": "canopylabs/orpheus-v1-english", "active": true, "context_window": 4000},
+    {"id": "meta-llama/llama-prompt-guard-2-22m", "active": true, "context_window": 512},
+    {"id": "meta-llama/llama-prompt-guard-2-86m", "active": true, "context_window": 512},
+    {"id": "openai/gpt-oss-120b", "active": true, "context_window": 131072},
+    {"id": "openai/gpt-oss-20b", "active": true, "context_window": 131072},
+    {"id": "openai/gpt-oss-safeguard-20b", "active": true, "context_window": 131072},
+    {"id": "qwen/qwen3.8-27b", "active": true, "context_window": 131072},
+    {"id": "whisper-large-v3", "active": true, "context_window": 448},
+    {"id": "whisper-large-v3-turbo", "active": true, "context_window": 448}
+  ],
+  "smoke": {
+    "status": "PASS",
+    "structured_output": "strict_json_schema",
+    "reasoning_effort": "medium",
+    "latency_ms": 639.747,
+    "prompt_tokens": 178,
+    "completion_tokens": 77,
+    "reasoning_tokens": 56,
+    "total_tokens": 255
+  },
+  "secret_recorded": false
+}

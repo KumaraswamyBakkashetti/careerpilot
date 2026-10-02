@@ -58,6 +58,115 @@ export type RetrievalBundle = {
   }>;
   sufficiency: { status: string; reasons: string[] };
 };
+export type RoadmapEvidence = {
+  evidence_id: string;
+  evidence_type: "ROLE_REQUIREMENT" | "STUDENT_STATUS" | "RESOURCE";
+  skill_id: string;
+  label: string;
+  source_id: string;
+  resource_id: string | null;
+  resource_name: string | null;
+  text: string | null;
+};
+export type Roadmap = {
+  roadmap_id: string;
+  version: number;
+  generated_at: string;
+  prompt_version: string;
+  model_provider: string;
+  model_id: string;
+  retrieval_trace_ids: string[];
+  evidence_bundle_version: string;
+  coverage_status: "SUFFICIENT" | "PARTIAL";
+  omitted_skill_ids: string[];
+  items: Array<{
+    item_id: string;
+    skill_id: string;
+    skill_name: string;
+    priority: "HIGH" | "MEDIUM" | "LOW";
+    reason_code: string;
+    recommendation: string;
+    evidence_ids: string[];
+    resource_ids: string[];
+    sequence: number;
+    suggested_activities: string[];
+    status: string;
+  }>;
+  evidence: RoadmapEvidence[];
+};
+export type CompanyPreparation = {
+  preparation_id: string;
+  company_name: string;
+  company_role_id: string;
+  company_role_name: string;
+  synthetic: boolean;
+  limitation: string;
+  prompt_version: string;
+  facts: Array<{
+    fact_type: string;
+    entity_id: string;
+    label: string;
+    assertion_id: string;
+    source_ids: string[];
+  }>;
+  items: Array<{
+    skill_id: string;
+    skill_name: string;
+    importance: string;
+    student_status: string;
+    recommendation: string;
+    activities: string[];
+    resource_ids: string[];
+  }>;
+};
+export type Interview = {
+  session_id: string;
+  company_role_id: string;
+  company_role_name: string;
+  interview_type: string;
+  difficulty: string;
+  status: "ACTIVE" | "COMPLETED";
+  questions: Array<{
+    question_id: string;
+    sequence: number;
+    text: string;
+    topic_name: string;
+    skill_ids: string[];
+  }>;
+  responses: Array<{
+    response_id: string;
+    question_id: string;
+    answer: string;
+  }>;
+  evaluations: Array<{
+    evaluation_id: string;
+    question_id: string;
+    status: string;
+    dimensions: Array<{
+      dimension: string;
+      rating: string;
+      feedback: string;
+    }>;
+    strengths: string[];
+    improvements: string[];
+    practice_evidence_ids: string[];
+  }>;
+};
+export type Readiness = {
+  snapshot_id: string;
+  score: number;
+  category: string;
+  rule_version: string;
+  version: number;
+  components: Array<{
+    component: string;
+    score: number;
+    weight: number;
+    explanation: string;
+  }>;
+  priority_skill_ids: string[];
+  limitation: string;
+};
 
 const object = (value: unknown): Record<string, unknown> => {
   if (typeof value !== "object" || value === null || Array.isArray(value))
@@ -292,4 +401,172 @@ export async function retrieveGapEvidence(
       )
     ).body,
   ) as RetrievalBundle;
+}
+
+export async function generateRoadmap(
+  token: string,
+  gapId: string,
+  client: ApiClient = apiClient,
+): Promise<Roadmap> {
+  return object(
+    (
+      await client.send(
+        "POST",
+        "/api/v1/roadmaps",
+        json({ gap_run_id: gapId }),
+        token,
+        undefined,
+        [201],
+        "application/json",
+      )
+    ).body,
+  ) as Roadmap;
+}
+
+export async function getCompanies(
+  token: string,
+  client: ApiClient = apiClient,
+): Promise<Array<{ id: string; name: string; synthetic: boolean }>> {
+  const body = object(
+    (await client.send("GET", "/api/v1/companies", undefined, token)).body,
+  );
+  if (!Array.isArray(body.items))
+    throw new ApiError("INVALID_RESPONSE", "Invalid company response.");
+  return body.items.map((value) => {
+    const item = object(value);
+    return {
+      id: text(item.id),
+      name: text(item.name),
+      synthetic: Boolean(item.synthetic),
+    };
+  });
+}
+
+export async function getCompanyRoles(
+  token: string,
+  companyId: string,
+  client: ApiClient = apiClient,
+): Promise<Array<{ id: string; name: string }>> {
+  const body = object(
+    (
+      await client.send(
+        "GET",
+        `/api/v1/companies/${encodeURIComponent(companyId)}/roles`,
+        undefined,
+        token,
+      )
+    ).body,
+  );
+  if (!Array.isArray(body.items))
+    throw new ApiError("INVALID_RESPONSE", "Invalid company-role response.");
+  return body.items.map((value) => {
+    const relation = object(value);
+    const item = object(relation.entity);
+    return { id: text(item.id), name: text(item.name) };
+  });
+}
+
+export async function generateCompanyPreparation(
+  token: string,
+  companyRoleId: string,
+  gapRunId: string,
+  client: ApiClient = apiClient,
+): Promise<CompanyPreparation> {
+  return object(
+    (
+      await client.send(
+        "POST",
+        "/api/v1/company-preparations",
+        json({ company_role_id: companyRoleId, gap_run_id: gapRunId }),
+        token,
+        undefined,
+        [201],
+        "application/json",
+      )
+    ).body,
+  ) as CompanyPreparation;
+}
+
+export async function startInterview(
+  token: string,
+  companyRoleId: string,
+  client: ApiClient = apiClient,
+): Promise<Interview> {
+  return object(
+    (
+      await client.send(
+        "POST",
+        "/api/v1/interviews",
+        json({
+          company_role_id: companyRoleId,
+          interview_type: "ROLE_SPECIFIC",
+          difficulty: "INTERMEDIATE",
+          question_count: 2,
+        }),
+        token,
+        undefined,
+        [201],
+        "application/json",
+      )
+    ).body,
+  ) as Interview;
+}
+
+export async function submitInterviewAnswer(
+  token: string,
+  sessionId: string,
+  questionId: string,
+  answer: string,
+  client: ApiClient = apiClient,
+): Promise<Interview> {
+  return object(
+    (
+      await client.send(
+        "POST",
+        `/api/v1/interviews/${encodeURIComponent(sessionId)}/responses`,
+        json({ question_id: questionId, answer }),
+        token,
+        undefined,
+        [200],
+        "application/json",
+      )
+    ).body,
+  ) as Interview;
+}
+
+export async function completeInterview(
+  token: string,
+  sessionId: string,
+  client: ApiClient = apiClient,
+): Promise<Interview> {
+  return object(
+    (
+      await client.send(
+        "POST",
+        `/api/v1/interviews/${encodeURIComponent(sessionId)}/complete`,
+        undefined,
+        token,
+      )
+    ).body,
+  ) as Interview;
+}
+
+export async function calculateReadiness(
+  token: string,
+  gapRunId: string,
+  client: ApiClient = apiClient,
+): Promise<Readiness> {
+  return object(
+    (
+      await client.send(
+        "POST",
+        "/api/v1/readiness",
+        json({ gap_run_id: gapRunId }),
+        token,
+        undefined,
+        [201],
+        "application/json",
+      )
+    ).body,
+  ) as Readiness;
 }

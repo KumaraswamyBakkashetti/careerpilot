@@ -1,0 +1,8 @@
+[
+  {"case_id":"no-evidence","status":"UNVERIFIED","evidence":false,"interview":false,"expected_score":0,"expected_category":"FOUNDATION"},
+  {"case_id":"resume-partial","status":"PARTIALLY_SUPPORTED","evidence":true,"interview":false,"expected_score":50,"expected_category":"PREPARING"},
+  {"case_id":"supported","status":"SUPPORTED","evidence":true,"interview":false,"expected_score":75,"expected_category":"WELL_PREPARED"},
+  {"case_id":"practice-partial","status":"PARTIALLY_SUPPORTED","evidence":true,"interview":true,"expected_score":75,"expected_category":"WELL_PREPARED"},
+  {"case_id":"rejected-only","status":"UNVERIFIED","evidence":false,"interview":true,"expected_score":25,"expected_category":"DEVELOPING"},
+  {"case_id":"updated-practice","status":"PARTIALLY_SUPPORTED","evidence":true,"interview":true,"expected_score":75,"expected_category":"WELL_PREPARED"}
+]

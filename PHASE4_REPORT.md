@@ -37,7 +37,7 @@ Generated evaluation compared 420/40, 900/120 and 1400/160. All produced 21 chun
 
 ## 9. Selected Embedding Model
 
-`multi-qa-MiniLM-L6-cos-v1` was selected. It achieved VECTOR_ONLY Precision@3 0.944 versus 0.917 and lower warm median latency in the 420/40 run, while recall and MRR tied. The small dataset limits generalization.
+`all-MiniLM-L6-v2` was selected at revision `1110a243...`. The evaluated multi-qa candidate achieved slightly higher VECTOR_ONLY Precision@3 (0.944 versus 0.917) and lower warm latency, but its pinned model card did not declare a license; the selected model's pinned card explicitly declares Apache-2.0. Both reached Recall@3/MRR 1.0 and hybrid P@3 1.0. The small dataset limits generalization.
 
 ## 10. Embedding Versioning
 
@@ -49,7 +49,7 @@ The implementation uses actual FAISS `IndexFlatIP`. Normalized document/query ve
 
 ## 12. Index Manifest
 
-The active manifest is `retrieval-f4fb6977a175bdd7f123ad7b`, 384 dimensions, 4 resources, 21 chunks. It hashes both `vectors.faiss` and `chunks.json`. Its files total 47,595 bytes (32,301 index + 14,252 metadata + 1,042 manifest).
+The active manifest is `retrieval-f6569969bb200688298acd23`, 384 dimensions, 4 resources, 21 chunks. It hashes both `vectors.faiss` and `chunks.json`. Its files total 47,588 bytes (32,301 index + 14,252 metadata + 1,035 manifest).
 
 ## 13. Index Lifecycle
 
@@ -117,11 +117,11 @@ The student gap view adds **Retrieve evidence**. It renders graph evidence under
 
 ## 29. Retrieval Metrics
 
-At selected 420/40 and k=3: VECTOR_ONLY P@3 0.944, R@3 1.000, MRR 1.000, hit rate 1.000; GRAPH_THEN_VECTOR P@3/R@3/MRR/hit rate are all 1.000. “Accuracy” is not reported.
+At selected 420/40 and k=3: VECTOR_ONLY P@3 0.917, R@3 1.000, MRR 1.000, hit rate 1.000; GRAPH_THEN_VECTOR P@3/R@3/MRR/hit rate are all 1.000. “Accuracy” is not reported.
 
 ## 30. Graph/Vector/Hybrid Comparison
 
-Graph filtering removed unrelated semantic matches and improved P@3 by 0.056 for the selected model without changing recall/MRR. GRAPH_ONLY is not assigned passage precision because the graph does not contain explanatory text; it remains the correct structural-query strategy.
+Graph filtering removed unrelated semantic matches and improved P@3 by 0.083 for the selected model without changing recall/MRR. GRAPH_ONLY is not assigned passage precision because the graph does not contain explanatory text; it remains the correct structural-query strategy.
 
 ## 31. Chunking Results
 
@@ -129,7 +129,7 @@ Quality tied across all three configurations. Selected-run index sizes were appr
 
 ## 32. Embedding Results
 
-The selected model improved vector P@3 by 0.027 over all-MiniLM on this dataset. Both reached perfect first-hit/recall. Cold first-model build measurements include model initialization and are reported transparently in JSON; warm builds were roughly 3.4–4.2 seconds.
+The multi-qa candidate improved vector P@3 by 0.027 over the selected all-MiniLM model on this dataset. Both reached perfect first-hit/recall. Licensing evidence determined the final choice. Cold first-model build measurements include model initialization and are reported transparently in JSON; warm builds were roughly 3.4–4.2 seconds.
 
 ## 33. Top-K Results
 
@@ -137,11 +137,11 @@ For selected model/hybrid: P@3 1.000, P@5 0.950 and P@10 0.525, with recall 1.00
 
 ## 34. Performance
 
-Selected 420/40 warm query evaluation: VECTOR_ONLY median/p95 5.4/7.4 ms; graph-constrained vector stage 5.3/6.7 ms. These numbers exclude live Neo4j/MongoDB HTTP overhead and were measured on this local Windows CPU environment.
+Selected 420/40 warm query evaluation: VECTOR_ONLY median/p95 6.674/8.358 ms; graph-constrained vector stage 6.122/7.344 ms. These numbers exclude live Neo4j/MongoDB HTTP overhead and were measured on this local Windows CPU environment.
 
 ## 35. Index Build Metrics
 
-Selected real CLI build: 4 resources, 21 chunks, 384 dimensions, 6,637.962 ms embedding, 6,643.189 ms total cold/cached process build, 47,595 artifact bytes. Repeating an equivalent build now reuses the compatible logical artifact.
+Selected real CLI build: 4 resources, 21 chunks, 384 dimensions, 16,256.886 ms embedding, 16,265.394 ms total cached-process build, 47,588 artifact bytes. Repeating an equivalent build reuses the compatible logical artifact.
 
 ## 36. Failure Testing
 

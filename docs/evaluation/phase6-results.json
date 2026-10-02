@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-10-01T20:13:11.363211+00:00",
+  "readiness": {
+    "dataset_size": 6,
+    "exact_correctness_percent": 100.0,
+    "passed": 6
+  },
+  "live": true,
+  "company": {
+    "dataset_size": 3,
+    "completed": 3,
+    "grounded_percent": 100.0
+  },
+  "questions": {
+    "dataset_size": 4,
+    "completed": 4,
+    "constraint_pass_percent": 100.0
+  },
+  "evaluations": {
+    "dataset_size": 5,
+    "completed": 5,
+    "rubric_adherence_percent": 100.0,
+    "consistency_runs": 2,
+    "exact_rating_agreement_percent": 100.0,
+    "distinct_rating_vectors": 1
+  },
+  "provider": {
+    "model": "openai/gpt-oss-120b",
+    "calls": 12,
+    "latency_median_ms": 1310.461,
+    "latency_p95_ms": 1762.732,
+    "tokens": {
+      "prompt": 5826,
+      "completion": 4648,
+      "reasoning": 3206,
+      "total": 10474
+    },
+    "failure": null
+  },
+  "provider_consistency": {
+    "runs": 2,
+    "exact_rating_agreement_percent": 100.0,
+    "distinct_rating_vectors": 1,
+    "latency_median_ms": 1459.546,
+    "tokens": {
+      "prompt": 1282,
+      "completion": 1033,
+      "reasoning": 665,
+      "total": 2315
+    },
+    "failure": "RATE_LIMITED"
+  }
+}

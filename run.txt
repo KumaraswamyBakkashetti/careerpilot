@@ -25,3 +25,38 @@ stop docker
 
 cd /d "C:\Users\KumaraswamyBakkashet\OneDrive - Zeta Global\Documents\CareerPilot"
 docker compose down
+
+
+
+Run these in Windows Command Prompt (cmd.exe) from the project folder.
+1. Open the project
+cd /d C:\Users\kumar\Downloads\CareerPilot\CareerPilot
+2. First-time setup
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\setup-env.ps1
+set UV_CACHE_DIR=%CD%\.uv-cache
+.tools\uv.exe sync --project backend --frozen
+npm.cmd ci --prefix frontend
+3. Start MongoDB and Neo4j
+docker compose up -d --wait --wait-timeout 240
+docker compose ps
+4. Initialize Neo4j and build the retrieval index
+cd backend
+.venv\Scripts\python.exe -m app.modules.knowledge.cli validate
+.venv\Scripts\python.exe -m app.modules.knowledge.cli schema
+.venv\Scripts\python.exe -m app.modules.knowledge.cli ingest --accept-curated
+
+set HF_HOME=%CD%\..\.hf-cache
+.venv\Scripts\python.exe -m app.modules.retrieval.cli build
+5. Start the backend
+In the same Command Prompt:
+.venv\Scripts\python.exe -m app
+Backend: http://localhost:8000
+API docs: http://localhost:8000/docs
+6. Start the frontend
+Open a second Command Prompt:
+cd /d C:\Users\kumar\Downloads\CareerPilot\CareerPilot\frontend
+npm.cmd run dev
+Frontend: http://localhost:5173
+Stop the database containers
+cd /d C:\Users\kumar\Downloads\CareerPilot\CareerPilot
+docker compose down

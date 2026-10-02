@@ -80,3 +80,27 @@ The frontend validates health, knowledge, and student bodies at runtime, not onl
 # Phase 4 retrieval routes
 
 All retrieval routes require the same bearer identity as private student routes. `POST /api/v1/retrieval/search` accepts only the finite `ROLE_REQUIREMENTS` or `SKILL_RESOURCES` task contract. `POST /api/v1/retrieval/skills/{skill_id}/resources` retrieves canonical graph and passage evidence. `POST /api/v1/retrieval/gaps/{gap_run_id}/evidence` verifies ownership and binds retrieval to a gap item. `GET /api/v1/retrieval/traces/{trace_id}` is owner-filtered. Responses are typed `EvidenceBundle`/`RetrievalTrace` records; no route exposes embeddings, raw FAISS objects, arbitrary paths or rebuild operations.
+## Phase 5 roadmap routes
+
+All routes require a student bearer token and enforce ownership server-side.
+
+- `POST /api/v1/roadmaps` accepts `gap_run_id` and optional `idempotency_key`; returns a validated persisted roadmap with 201.
+- `GET /api/v1/roadmaps?limit=20` lists only the authenticated student's history.
+- `GET /api/v1/roadmaps/{roadmap_id}` returns an owned roadmap.
+- `GET /api/v1/roadmaps/{roadmap_id}/evidence` returns typed role, student-status, and resource evidence.
+- `POST /api/v1/roadmaps/{roadmap_id}/regenerate` requires an idempotency key and preserves history.
+- `GET /api/v1/roadmaps/model-health` reports sanitized provider/model availability and structured-output mode.
+
+There is no raw `/llm` or `/groq` route. Generation uses specific sufficiency, provider, rate-limit, schema, grounding, and evidence-reference errors. Existing roadmap reads do not require Groq.
+
+## Phase 6 specialist routes
+
+All routes require a bearer token and all artifact reads filter by the authenticated student.
+
+- `GET /api/v1/companies` and `GET /api/v1/companies/{id}/roles` expose bounded canonical graph data.
+- `POST /api/v1/company-preparations` accepts a canonical company role plus owned gap snapshot. `GET /company-preparations/{id}` and `/evidence` return the immutable artifact.
+- `POST /api/v1/interviews` starts a bounded text session (`TECHNICAL_CONCEPTUAL` or `ROLE_SPECIFIC`, 1–5 questions). `POST /interviews/{id}/responses` durably stores one immutable answer before evaluation. `POST /complete` enforces the lifecycle; `/results` returns the owned session.
+- `POST /api/v1/readiness` calculates and persists a versioned snapshot from an owned gap. `GET /readiness/latest`, `/{id}`, and `/{id}/evidence` are read-only.
+- `GET /api/v1/orchestration/{id}` returns workflow steps and artifact references, never hidden model reasoning.
+
+Duplicate requests use deterministic identities and unique indexes. Evaluation provider failure preserves the response with `FAILED_RETRYABLE`; resubmitting the identical answer safely retries evaluation. Practice evidence is `EXTRACTED`, never automatically `CONFIRMED`.

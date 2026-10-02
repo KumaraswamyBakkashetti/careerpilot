@@ -51,6 +51,12 @@ services:
       CP_JWT_SECRET: ${CP_JWT_SECRET:?Set CP_JWT_SECRET in .env}
       CP_RESUME_STORAGE_ROOT: /app/private/resumes
       CP_RETRIEVAL_INDEX_ROOT: /app/private/retrieval-index
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      CP_LLM_PROVIDER: groq
+      CP_GROQ_MODEL: ${CP_GROQ_MODEL:-openai/gpt-oss-120b}
+      CP_GROQ_REASONING_EFFORT: ${CP_GROQ_REASONING_EFFORT:-medium}
+      CP_GROQ_TIMEOUT_SECONDS: ${CP_GROQ_TIMEOUT_SECONDS:-45}
+      CP_GROQ_MAX_RETRIES: ${CP_GROQ_MAX_RETRIES:-1}
       HF_HOME: /app/private/model-cache
     ports:
       - "127.0.0.1:8000:8000"

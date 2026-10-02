@@ -6,6 +6,7 @@ import { getRoleSkills, getRoles } from "./knowledge";
 import {
   authenticate,
   decideEvidence,
+  generateRoadmap,
   getEvidence,
   runGap,
   updateProfile,
@@ -67,7 +68,7 @@ it.skipIf(process.env.CP_RUN_FRONTEND_INTEGRATION !== "1")(
 it.skipIf(process.env.CP_RUN_FRONTEND_INTEGRATION !== "1")(
   "real frontend client performs the private resume and cross-store gap flow",
   async () => {
-    const client = new ApiClient("http://127.0.0.1:5173", 20_000);
+    const client = new ApiClient("http://127.0.0.1:5173", 45_000);
     const identity = `${Date.now()}-${crypto.randomUUID()}@example.test`;
     const token = await authenticate(
       "register",
@@ -116,8 +117,25 @@ it.skipIf(process.env.CP_RUN_FRONTEND_INTEGRATION !== "1")(
       gap.items.find((item) => item.skill_id === "skill_sql")?.status,
     ).toBe("PARTIALLY_SUPPORTED");
     expect(gap.items.some((item) => item.status === "UNVERIFIED")).toBe(true);
+    const roadmap = await generateRoadmap(token, gap.run_id, client);
+    expect(roadmap.items.length).toBeGreaterThan(0);
+    expect(roadmap.coverage_status).toBe("PARTIAL");
+    expect(roadmap.items.every((item) => item.evidence_ids.length >= 3)).toBe(
+      true,
+    );
+    expect(
+      roadmap.evidence.some(
+        (item) => item.evidence_type === "ROLE_REQUIREMENT",
+      ),
+    ).toBe(true);
+    expect(
+      roadmap.evidence.some((item) => item.evidence_type === "STUDENT_STATUS"),
+    ).toBe(true);
+    expect(
+      roadmap.evidence.some((item) => item.evidence_type === "RESOURCE"),
+    ).toBe(true);
   },
-  30_000,
+  60_000,
 );
 
 it.skipIf(process.env.CP_RUN_FRONTEND_INTEGRATION !== "1")(

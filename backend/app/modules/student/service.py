@@ -297,8 +297,16 @@ class StudentService:
         )
         if result is None:
             raise ApplicationError("EVIDENCE_NOT_FOUND")
-        remaining = await self.repository.evidence(student_id, result.resume_id)
-        if remaining and all(item.verification_status != "EXTRACTED" for item in remaining):
+        remaining = (
+            await self.repository.evidence(student_id, result.resume_id)
+            if result.resume_id is not None
+            else []
+        )
+        if (
+            result.resume_id
+            and remaining
+            and all(item.verification_status != "EXTRACTED" for item in remaining)
+        ):
             await self.repository.update_resume_status(student_id, result.resume_id, "COMPLETED")
         return result
 

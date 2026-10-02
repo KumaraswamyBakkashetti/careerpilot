@@ -3,26 +3,45 @@ import { ApiError } from "../api/client";
 import { getRoles, getSkills, type Entity } from "../api/knowledge";
 import {
   authenticate,
+  calculateReadiness,
+  completeInterview,
   decideEvidence,
+  generateRoadmap,
+  generateCompanyPreparation,
+  getCompanies,
+  getCompanyRoles,
   getEvidence,
   getProfile,
   getResumes,
   runGap,
   retrieveGapEvidence,
+  startInterview,
+  submitInterviewAnswer,
   updateProfile,
   uploadResume,
   type Evidence,
   type GapRun,
   type RetrievalBundle,
   type Profile,
+  type Roadmap,
+  type CompanyPreparation,
+  type Interview,
+  type Readiness,
   type Resume,
 } from "../api/student";
 
 const errorMessage = (error: unknown) =>
   error instanceof ApiError
-    ? error.code === "DEPENDENCY_UNAVAILABLE"
-      ? "Private student services are temporarily unavailable."
-      : "The request could not be completed. Check the supplied information."
+    ? error.code === "RATE_LIMITED"
+      ? "Roadmap generation is rate limited. Please try again later."
+      : error.code === "ROADMAP_EVIDENCE_INSUFFICIENT"
+        ? "CareerPilot needs more validated evidence before generating a roadmap."
+        : error.code === "PROVIDER_UNAVAILABLE" ||
+            error.code === "MODEL_UNAVAILABLE"
+          ? "Roadmap generation is temporarily unavailable; your evidence is safe."
+          : error.code === "DEPENDENCY_UNAVAILABLE"
+            ? "Private student services are temporarily unavailable."
+            : "The request could not be completed. Check the supplied information."
     : "The request could not be completed.";
 
 export function StudentWorkspace() {
@@ -35,6 +54,21 @@ export function StudentWorkspace() {
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [gap, setGap] = useState<GapRun | null>(null);
   const [retrieval, setRetrieval] = useState<RetrievalBundle | null>(null);
+  const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
+  const [companies, setCompanies] = useState<
+    Array<{ id: string; name: string; synthetic: boolean }>
+  >([]);
+  const [companyRoles, setCompanyRoles] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [companyId, setCompanyId] = useState("");
+  const [companyRoleId, setCompanyRoleId] = useState("");
+  const [preparation, setPreparation] = useState<CompanyPreparation | null>(
+    null,
+  );
+  const [interview, setInterview] = useState<Interview | null>(null);
+  const [answer, setAnswer] = useState("");
+  const [readiness, setReadiness] = useState<Readiness | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -61,6 +95,10 @@ export function StudentWorkspace() {
       },
       (failure: unknown) =>
         !controller.signal.aborted && setError(errorMessage(failure)),
+    );
+    getCompanies(token).then(
+      (values) => !controller.signal.aborted && setCompanies(values),
+      () => !controller.signal.aborted && setCompanies([]),
     );
     return () => controller.abort();
   }, [token]);
@@ -138,6 +176,7 @@ export function StudentWorkspace() {
       setResumes(list);
       setEvidence(await getEvidence(token, value.resume_id));
       setGap(null);
+      setRoadmap(null);
     } catch (failure) {
       setError(errorMessage(failure));
     } finally {
@@ -163,6 +202,7 @@ export function StudentWorkspace() {
         ),
       );
       setGap(null);
+      setRoadmap(null);
     } catch (failure) {
       setError(errorMessage(failure));
     } finally {
@@ -173,6 +213,7 @@ export function StudentWorkspace() {
     try {
       setProfile(await updateProfile(token, { target_role_id: roleId }));
       setGap(null);
+      setRoadmap(null);
     } catch (failure) {
       setError(errorMessage(failure));
     }
@@ -193,6 +234,104 @@ export function StudentWorkspace() {
     setError("");
     try {
       setRetrieval(await retrieveGapEvidence(token, gap.run_id, skillId));
+    } catch (failure) {
+      setError(errorMessage(failure));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const createRoadmap = async () => {
+    if (!gap) return;
+    setBusy(true);
+    setError("");
+    try {
+      setRoadmap(await generateRoadmap(token, gap.run_id));
+    } catch (failure) {
+      setError(errorMessage(failure));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const selectCompany = async (id: string) => {
+    setCompanyId(id);
+    setCompanyRoleId("");
+    setPreparation(null);
+    setInterview(null);
+    try {
+      setCompanyRoles(id ? await getCompanyRoles(token, id) : []);
+    } catch (failure) {
+      setError(errorMessage(failure));
+    }
+  };
+  const prepareForCompany = async () => {
+    if (!gap || !companyRoleId) return;
+    setBusy(true);
+    setError("");
+    try {
+      setPreparation(
+        await generateCompanyPreparation(token, companyRoleId, gap.run_id),
+      );
+    } catch (failure) {
+      setError(errorMessage(failure));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const beginInterview = async () => {
+    if (!companyRoleId) return;
+    setBusy(true);
+    setError("");
+    try {
+      setInterview(await startInterview(token, companyRoleId));
+      setAnswer("");
+    } catch (failure) {
+      setError(errorMessage(failure));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const currentQuestion = interview?.questions.find(
+    (question) =>
+      !interview.responses.some(
+        (response) => response.question_id === question.question_id,
+      ),
+  );
+  const submitAnswer = async () => {
+    if (!interview || !currentQuestion || !answer.trim()) return;
+    setBusy(true);
+    setError("");
+    try {
+      setInterview(
+        await submitInterviewAnswer(
+          token,
+          interview.session_id,
+          currentQuestion.question_id,
+          answer.trim(),
+        ),
+      );
+      setAnswer("");
+    } catch (failure) {
+      setError(errorMessage(failure));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const finishInterview = async () => {
+    if (!interview) return;
+    setBusy(true);
+    try {
+      setInterview(await completeInterview(token, interview.session_id));
+    } catch (failure) {
+      setError(errorMessage(failure));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const assessReadiness = async () => {
+    if (!gap) return;
+    setBusy(true);
+    try {
+      setReadiness(await calculateReadiness(token, gap.run_id));
     } catch (failure) {
       setError(errorMessage(failure));
     } finally {
@@ -330,7 +469,290 @@ export function StudentWorkspace() {
               </li>
             ))}
           </ul>
+          <button disabled={busy} onClick={createRoadmap}>
+            Generate grounded learning roadmap
+          </button>
         </div>
+      )}
+      {roadmap && (
+        <div className="roadmap-results" aria-live="polite">
+          <p className="eyebrow">PERSONALIZED LEARNING ROADMAP</p>
+          <h3>Validated evidence, generated recommendations</h3>
+          <p className="roadmap-meta">
+            Version {roadmap.version} · {roadmap.prompt_version} · evidence
+            bundle {roadmap.evidence_bundle_version}
+          </p>
+          {roadmap.coverage_status === "PARTIAL" && (
+            <p className="roadmap-coverage" role="status">
+              Partial coverage: no recommendation was generated for{" "}
+              {roadmap.omitted_skill_ids.join(", ")} because the current corpus
+              did not supply enough validated learning evidence.
+            </p>
+          )}
+          <ol>
+            {roadmap.items.map((item) => {
+              const evidence = roadmap.evidence.filter(
+                (entry) =>
+                  entry.skill_id === item.skill_id &&
+                  item.evidence_ids.includes(entry.evidence_id),
+              );
+              const requirement = evidence.find(
+                (entry) => entry.evidence_type === "ROLE_REQUIREMENT",
+              );
+              const studentStatus = evidence.find(
+                (entry) => entry.evidence_type === "STUDENT_STATUS",
+              );
+              const resources = evidence.filter(
+                (entry) => entry.evidence_type === "RESOURCE",
+              );
+              return (
+                <li key={item.item_id}>
+                  <div className="roadmap-item-heading">
+                    <h4>
+                      {item.sequence}. {item.skill_name}
+                    </h4>
+                    <span
+                      className={`roadmap-priority ${item.priority.toLowerCase()}`}
+                    >
+                      {item.priority}
+                    </span>
+                  </div>
+                  <dl>
+                    <div>
+                      <dt>Requirement · graph fact</dt>
+                      <dd>{requirement?.label}</dd>
+                    </div>
+                    <div>
+                      <dt>Student status · evidence analysis</dt>
+                      <dd>{studentStatus?.label}</dd>
+                    </div>
+                    <div>
+                      <dt>CareerPilot recommendation · generated synthesis</dt>
+                      <dd>{item.recommendation}</dd>
+                    </div>
+                  </dl>
+                  <h5>Suggested activities</h5>
+                  <ul>
+                    {item.suggested_activities.map((activity) => (
+                      <li key={activity}>{activity}</li>
+                    ))}
+                  </ul>
+                  <h5>Supporting resources · retrieval evidence</h5>
+                  {resources.map((resource) => (
+                    <p className="roadmap-resource" key={resource.evidence_id}>
+                      <strong>
+                        {resource.resource_name ?? resource.resource_id}
+                      </strong>
+                      <span>{resource.text}</span>
+                      <small>Source: {resource.source_id}</small>
+                    </p>
+                  ))}
+                </li>
+              );
+            })}
+          </ol>
+          <small>
+            Generated synthesis is separate from graph facts, student evidence,
+            and retrieved resources. Hidden model reasoning is never displayed.
+          </small>
+        </div>
+      )}
+      {gap && (
+        <section
+          className="specialist-workflows"
+          aria-labelledby="specialist-title"
+        >
+          <p className="eyebrow">SPECIALIST WORKFLOWS</p>
+          <h3 id="specialist-title">Prepare, practice, then reassess</h3>
+          <div className="company-picker">
+            <label>
+              Canonical company
+              <select
+                value={companyId}
+                onChange={(event) => selectCompany(event.target.value)}
+              >
+                <option value="">Select a company…</option>
+                {companies.map((company) => (
+                  <option key={company.id} value={company.id}>
+                    {company.name}
+                    {company.synthetic ? " · synthetic" : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Company role
+              <select
+                value={companyRoleId}
+                onChange={(event) => setCompanyRoleId(event.target.value)}
+              >
+                <option value="">Select a company role…</option>
+                {companyRoles.map((role) => (
+                  <option key={role.id} value={role.id}>
+                    {role.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              disabled={busy || !companyRoleId}
+              onClick={prepareForCompany}
+            >
+              Prepare for company
+            </button>
+            <button disabled={busy || !companyRoleId} onClick={beginInterview}>
+              Start text mock interview
+            </button>
+          </div>
+        </section>
+      )}
+      {preparation && (
+        <section className="company-preparation" aria-live="polite">
+          <p className="eyebrow">COMPANY PREPARATION</p>
+          <h3>{preparation.company_role_name}</h3>
+          <p className="scope-warning" role="status">
+            {preparation.limitation}
+          </p>
+          <h4>Validated graph facts</h4>
+          <ul>
+            {preparation.facts.map((fact) => (
+              <li key={fact.assertion_id}>
+                {fact.label}
+                <small>Source: {fact.source_ids.join(", ")}</small>
+              </li>
+            ))}
+          </ul>
+          <h4>CareerPilot generated synthesis</h4>
+          <ol>
+            {preparation.items.map((item) => (
+              <li key={item.skill_id}>
+                <strong>
+                  {item.skill_name} · {item.importance}
+                </strong>
+                <span className="status-chip">
+                  {item.student_status.replace("_", " ")}
+                </span>
+                <p>{item.recommendation}</p>
+                <ul>
+                  {item.activities.map((activity) => (
+                    <li key={activity}>{activity}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+      {interview && (
+        <section className="mock-interview" aria-live="polite">
+          <p className="eyebrow">TEXT MOCK INTERVIEW</p>
+          <h3>{interview.company_role_name}</h3>
+          <p>
+            {interview.interview_type.replace("_", " ")} ·{" "}
+            {interview.difficulty} · {interview.responses.length}/
+            {interview.questions.length} answered
+          </p>
+          {currentQuestion ? (
+            <div className="interview-question">
+              <small>
+                Question {currentQuestion.sequence} ·{" "}
+                {currentQuestion.topic_name}
+              </small>
+              <h4>{currentQuestion.text}</h4>
+              <label>
+                Your answer
+                <textarea
+                  rows={7}
+                  maxLength={8000}
+                  value={answer}
+                  onChange={(event) => setAnswer(event.target.value)}
+                />
+              </label>
+              <button disabled={busy || !answer.trim()} onClick={submitAnswer}>
+                Submit answer for structured feedback
+              </button>
+            </div>
+          ) : interview.status === "ACTIVE" ? (
+            <button disabled={busy} onClick={finishInterview}>
+              Complete interview
+            </button>
+          ) : (
+            <p className="success-note">
+              Interview completed. Practice evidence remains unconfirmed
+              evidence, not mastery.
+            </p>
+          )}
+          {interview.evaluations
+            .filter((item) => item.status === "COMPLETED")
+            .map((evaluation) => {
+              const question = interview.questions.find(
+                (item) => item.question_id === evaluation.question_id,
+              );
+              const response = interview.responses.find(
+                (item) => item.question_id === evaluation.question_id,
+              );
+              return (
+                <article
+                  className="interview-feedback"
+                  key={evaluation.evaluation_id}
+                >
+                  <h4>{question?.text}</h4>
+                  <blockquote>{response?.answer}</blockquote>
+                  <dl>
+                    {evaluation.dimensions.map((dimension) => (
+                      <div key={dimension.dimension}>
+                        <dt>
+                          {dimension.dimension.replaceAll("_", " ")} ·{" "}
+                          {dimension.rating}
+                        </dt>
+                        <dd>{dimension.feedback}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <small>
+                    {evaluation.practice_evidence_ids.length
+                      ? "Practice evidence recorded with session, question, and evaluation provenance."
+                      : "No practice evidence was created from this response."}
+                  </small>
+                </article>
+              );
+            })}
+        </section>
+      )}
+      {gap && (
+        <section className="readiness-panel">
+          <p className="eyebrow">PREPARATION READINESS</p>
+          <h3>Evidence-backed, not a placement prediction</h3>
+          <button disabled={busy} onClick={assessReadiness}>
+            Calculate readiness snapshot
+          </button>
+          {readiness && (
+            <div className="readiness-result" aria-live="polite">
+              <div className="readiness-score">
+                <strong>{readiness.score}</strong>
+                <span>/ 100 · {readiness.category}</span>
+              </div>
+              <p>{readiness.limitation}</p>
+              <dl>
+                {readiness.components.map((component) => (
+                  <div key={component.component}>
+                    <dt>
+                      {component.component.replaceAll("_", " ")}{" "}
+                      <b>{component.score}</b>
+                    </dt>
+                    <dd>
+                      {component.explanation} Weight: {component.weight}%.
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <small>
+                {readiness.rule_version} · immutable snapshot version{" "}
+                {readiness.version}
+              </small>
+            </div>
+          )}
+        </section>
       )}
       {retrieval && (
         <div className="retrieval-results" aria-live="polite">

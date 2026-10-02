@@ -3,6 +3,7 @@ import { ApiClient, ApiError } from "./client";
 import {
   authenticate,
   decideEvidence,
+  generateRoadmap,
   getEvidence,
   getProfile,
   runGap,
@@ -135,4 +136,20 @@ it("rejects malformed private responses", async () => {
   await expect(
     getEvidence("token", "resume_1", clientReturning({ items: [] })),
   ).rejects.toBeInstanceOf(ApiError);
+});
+
+it("requests the task-oriented roadmap endpoint without exposing a raw LLM API", async () => {
+  const client = clientReturning(
+    { roadmap_id: "roadmap_1", items: [], evidence: [] },
+    201,
+  );
+  await expect(
+    generateRoadmap("token", "gap_1", client),
+  ).resolves.toMatchObject({
+    roadmap_id: "roadmap_1",
+  });
+  const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+  expect(url).toContain("/api/v1/roadmaps");
+  expect(String(init.body)).toContain("gap_1");
+  expect(url).not.toMatch(/llm|groq/);
 });

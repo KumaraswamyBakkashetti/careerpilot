@@ -21,20 +21,29 @@ from app.core.errors import (
 )
 from app.core.logging import configure_logging
 from app.core.middleware import RequestContextMiddleware, SanitizedErrorsMiddleware
+from app.infrastructure.groq import GroqAdapter
 from app.infrastructure.knowledge import Neo4jKnowledgeRepository
 from app.infrastructure.mongodb import MongoDBAdapter
 from app.infrastructure.neo4j import Neo4jAdapter
+from app.infrastructure.phase6 import MongoPhase6Repository
 from app.infrastructure.retrieval_index import FaissIndexStore
 from app.infrastructure.retrieval_trace import MongoRetrievalTraceRepository
+from app.infrastructure.roadmap import MongoRoadmapRepository
 from app.infrastructure.student import MongoStudentRepository
 from app.modules.knowledge.repository import KnowledgeRepository
 from app.modules.knowledge.routes import router as knowledge_router
 from app.modules.knowledge.service import KnowledgeService
+from app.modules.phase6.repository import InMemoryPhase6Repository
+from app.modules.phase6.routes import router as phase6_router
+from app.modules.phase6.service import Phase6Service
 from app.modules.retrieval.corpus import corpus_fingerprint, load_corpus
 from app.modules.retrieval.embedding import SentenceTransformerEmbeddingProvider
 from app.modules.retrieval.repository import InMemoryRetrievalTraceRepository
 from app.modules.retrieval.routes import router as retrieval_router
 from app.modules.retrieval.service import RetrievalService
+from app.modules.roadmap.repository import InMemoryRoadmapRepository
+from app.modules.roadmap.routes import router as roadmap_router
+from app.modules.roadmap.service import RoadmapService
 from app.modules.student.repository import StudentRepository
 from app.modules.student.routes import router as student_router
 from app.modules.student.service import StudentService
@@ -50,6 +59,8 @@ def create_app(
     student_repository: StudentRepository | None = None,
     resume_storage: LocalResumeStorage | None = None,
     retrieval_service: RetrievalService | None = None,
+    roadmap_service: RoadmapService | None = None,
+    phase6_service: Phase6Service | None = None,
 ) -> FastAPI:
     config = settings if settings is not None else Settings()
     configure_logging(config.log_level)
@@ -165,6 +176,55 @@ def create_app(
                     extra={"dependency": "mongodb", "category": type(exc).__name__},
                 )
             application.state.retrieval = retrieval
+            shared_gateway = (
+                GroqAdapter(config) if roadmap_service is None or phase6_service is None else None
+            )
+            if shared_gateway is not None:
+                stack.push_async_callback(shared_gateway.close)
+            if roadmap_service is None:
+                roadmap_repository = (
+                    MongoRoadmapRepository(mongo)
+                    if isinstance(mongo, MongoDBAdapter)
+                    else InMemoryRoadmapRepository()
+                )
+                assert shared_gateway is not None
+                roadmaps = RoadmapService(
+                    student_repo, retrieval, roadmap_repository, shared_gateway
+                )
+            else:
+                roadmaps = roadmap_service
+            try:
+                await roadmaps.initialize()
+            except Exception as exc:
+                logger.warning(
+                    "roadmap_initialization_failed",
+                    extra={"dependency": "mongodb", "category": type(exc).__name__},
+                )
+            application.state.roadmaps = roadmaps
+            if phase6_service is None:
+                phase6_repository = (
+                    MongoPhase6Repository(mongo)
+                    if isinstance(mongo, MongoDBAdapter)
+                    else InMemoryPhase6Repository()
+                )
+                assert shared_gateway is not None
+                phase6 = Phase6Service(
+                    student_repo,
+                    repository,
+                    retrieval,
+                    phase6_repository,
+                    shared_gateway,
+                )
+            else:
+                phase6 = phase6_service
+            try:
+                await phase6.initialize()
+            except Exception as exc:
+                logger.warning(
+                    "phase6_initialization_failed",
+                    extra={"dependency": "mongodb", "category": type(exc).__name__},
+                )
+            application.state.phase6 = phase6
             # Probe at startup, but preserve liveness even during dependency outages.
             await application.state.health.readiness()
             logger.info("application_started")
@@ -176,9 +236,9 @@ def create_app(
 
     application = FastAPI(
         title="CareerPilot",
-        version="0.4.0",
+        version="0.6.0",
         debug=False,  # Never expose traceback pages, even when local DEBUG is enabled.
-        description="Phase 4 traceable graph-enhanced hybrid evidence retrieval.",
+        description="Phase 6 grounded preparation, interviews and explainable readiness.",
         lifespan=lifespan,
         responses={
             404: {"model": ErrorResponse},
@@ -204,4 +264,6 @@ def create_app(
     application.include_router(knowledge_router, prefix=config.api_prefix)
     application.include_router(student_router, prefix=config.api_prefix)
     application.include_router(retrieval_router, prefix=config.api_prefix)
+    application.include_router(roadmap_router, prefix=config.api_prefix)
+    application.include_router(phase6_router, prefix=config.api_prefix)
     return application

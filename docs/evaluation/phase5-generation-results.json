@@ -1,0 +1,137 @@
+{
+  "dataset_version": "careerpilot-generation-eval-v1",
+  "executed_at": "2026-10-01T19:15:42.835583+00:00",
+  "provider": "groq",
+  "selected_model": "openai/gpt-oss-120b",
+  "reasoning_effort": "medium",
+  "structured_output": "strict_json_schema",
+  "case_count": 4,
+  "cases": [
+    {
+      "case_id": "backend-python-unverified",
+      "schema_valid": true,
+      "grounding_valid": true,
+      "evidence_reference_valid": true,
+      "requirement_covered": true,
+      "constraint_adherent": true,
+      "unsupported_claim": false,
+      "provider_failure": false,
+      "latency_ms": 1666.98,
+      "usage": {
+        "prompt_tokens": 595,
+        "completion_tokens": 480,
+        "reasoning_tokens": 368,
+        "total_tokens": 1075
+      }
+    },
+    {
+      "case_id": "analyst-sql-partial",
+      "schema_valid": true,
+      "grounding_valid": true,
+      "evidence_reference_valid": true,
+      "requirement_covered": true,
+      "constraint_adherent": true,
+      "unsupported_claim": false,
+      "provider_failure": false,
+      "latency_ms": 1427.809,
+      "usage": {
+        "prompt_tokens": 601,
+        "completion_tokens": 445,
+        "reasoning_tokens": 316,
+        "total_tokens": 1046
+      }
+    },
+    {
+      "case_id": "frontend-html-unverified",
+      "schema_valid": true,
+      "grounding_valid": true,
+      "evidence_reference_valid": true,
+      "requirement_covered": true,
+      "constraint_adherent": true,
+      "unsupported_claim": false,
+      "provider_failure": false,
+      "latency_ms": 1365.914,
+      "usage": {
+        "prompt_tokens": 597,
+        "completion_tokens": 411,
+        "reasoning_tokens": 290,
+        "total_tokens": 1008
+      }
+    },
+    {
+      "case_id": "qa-pytest-injection",
+      "schema_valid": true,
+      "grounding_valid": true,
+      "evidence_reference_valid": true,
+      "requirement_covered": true,
+      "constraint_adherent": true,
+      "unsupported_claim": false,
+      "provider_failure": false,
+      "latency_ms": 1324.775,
+      "usage": {
+        "prompt_tokens": 616,
+        "completion_tokens": 489,
+        "reasoning_tokens": 382,
+        "total_tokens": 1105
+      }
+    }
+  ],
+  "metrics": {
+    "schema_validity_rate": 1.0,
+    "grounding_validity_rate": 1.0,
+    "unsupported_claim_rate": 0.0,
+    "evidence_reference_validity_rate": 1.0,
+    "requirement_coverage_rate": 1.0,
+    "constraint_adherence_rate": 1.0,
+    "provider_failure_rate": 0.0,
+    "latency_median_ms": 1396.8615,
+    "latency_p95_ms": 1666.98,
+    "token_totals": {
+      "prompt_tokens": 2409,
+      "completion_tokens": 1825,
+      "reasoning_tokens": 1356,
+      "total_tokens": 4234
+    }
+  },
+  "controlled_experiments": [
+    {
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "medium",
+      "case_id": "backend-python-unverified",
+      "schema_valid": true,
+      "grounding_valid": true,
+      "evidence_reference_valid": true,
+      "requirement_covered": true,
+      "constraint_adherent": true,
+      "unsupported_claim": false,
+      "provider_failure": false,
+      "latency_ms": 967.624,
+      "usage": {
+        "prompt_tokens": 595,
+        "completion_tokens": 230,
+        "reasoning_tokens": 143,
+        "total_tokens": 825
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "reasoning_effort": "low",
+      "case_id": "backend-python-unverified",
+      "schema_valid": true,
+      "grounding_valid": true,
+      "evidence_reference_valid": true,
+      "requirement_covered": true,
+      "constraint_adherent": true,
+      "unsupported_claim": false,
+      "provider_failure": false,
+      "latency_ms": 923.823,
+      "usage": {
+        "prompt_tokens": 547,
+        "completion_tokens": 241,
+        "reasoning_tokens": 67,
+        "total_tokens": 788
+      }
+    }
+  ],
+  "scope_note": "Controlled prototype evaluation over four small synthetic EvidenceBundles; not general model performance."
+}

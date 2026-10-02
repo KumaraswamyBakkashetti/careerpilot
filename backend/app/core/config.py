@@ -45,6 +45,13 @@ class Settings(BaseSettings):
     retrieval_chunk_overlap: int = Field(default=40, ge=0, le=1000)
     retrieval_top_k: int = Field(default=3, ge=1, le=20)
     retrieval_max_top_k: int = Field(default=20, ge=1, le=100)
+    llm_provider: Literal["groq"] = "groq"
+    groq_api_key: SecretStr = Field(default=SecretStr(""), validation_alias="GROQ_API_KEY")
+    groq_model: str = "openai/gpt-oss-120b"
+    groq_reasoning_effort: Literal["low", "medium", "high"] = "medium"
+    groq_timeout_seconds: float = Field(default=45, ge=1, le=120)
+    groq_max_retries: int = Field(default=1, ge=0, le=2)
+    groq_base_url: str = "https://api.groq.com/openai/v1"
 
     @field_validator("cors_origins")
     @classmethod
@@ -97,6 +104,14 @@ class Settings(BaseSettings):
         ):
             raise ValueError("Neo4j URI must use an approved scheme without embedded credentials")
         return value
+
+    @field_validator("groq_base_url")
+    @classmethod
+    def groq_url(cls, value: str) -> str:
+        parsed = urlsplit(value)
+        if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:
+            raise ValueError("Groq base URL must be HTTPS without embedded credentials")
+        return value.rstrip("/")
 
     @model_validator(mode="after")
     def production_policy(self) -> Self:

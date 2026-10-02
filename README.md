@@ -4,7 +4,7 @@
 
 CareerPilot is a placement-preparation and career-mentoring system. Its planned capabilities combine persistent student profiles, resume evidence, career-domain knowledge, graph/vector retrieval, agent orchestration, and evidence-backed preparation workflows. KA-RAG informs the research direction; this repository does not implement the paper or claim its results.
 
-**Current status: Phase 4 implemented and locally verified.** CareerPilot now adds a canonical resource corpus, deterministic chunks, local Sentence Transformer embeddings, integrity-checked FAISS retrieval, graph-guided relevance filtering, typed evidence fusion, deterministic sufficiency and private retrieval traces. No LLM generation is present. See [PHASE4_REPORT.md](PHASE4_REPORT.md) for evidence and limits.
+**Current status: Phase 6 implemented and locally verified.** CareerPilot now includes grounded company preparation, text mock interviews, practice-evidence feedback, deterministic readiness snapshots, and a bounded specialist orchestrator. The only company is explicitly synthetic; readiness is not a hiring probability. See [PHASE6_REPORT.md](PHASE6_REPORT.md) for evidence and limits.
 
 ## Scope and architecture
 
@@ -22,9 +22,12 @@ Infrastructure adapters
        +-- Neo4j: canonical career knowledge and role requirements
        +-- FAISS: rebuildable normalized resource-chunk vectors
        +-- MongoDB: owner-scoped retrieval traces
+       +-- Groq via LLMGateway: grounded structured synthesis only
+       +-- MongoDB: owner-scoped roadmaps and generation runs
+       +-- MongoDB: preparations, interviews, practice evidence, readiness, orchestration
 ```
 
-Phase 4 retains every earlier boundary and adds evidence retrieval only. Neo4j answers structural questions, FAISS finds semantic passages, MongoDB supplies private gap context and owns trace history. No LLM, roadmap, interview generation, readiness score, arbitrary reranking formula, or student-resume embedding is implemented.
+Phase 6 retains every earlier boundary. Neo4j answers structural questions, FAISS finds semantic passages, MongoDB owns private mutable history, deterministic rules calculate readiness, and Groq generates only validated prose within specialist contracts. There are no autonomous agent loops, web search, provider tools, coding execution, voice/video analysis, placement prediction, or student-resume embeddings.
 
 Domain modules will be added when their real use cases arrive; there are no empty placeholder modules. See [architecture](docs/architecture/phase1.md), [ADR-001](docs/architecture/ADR-001-modular-monolith.md), and [API conventions](docs/api-contract.md).
 
@@ -190,6 +193,34 @@ cd ..
 
 The labelled dataset is [backend/retrieval_data/evaluation-v1.json](backend/retrieval_data/evaluation-v1.json); generated results are [JSON](docs/evaluation/phase4-retrieval-results.json) and [Markdown](docs/evaluation/phase4-retrieval-results.md). Full design and failure semantics are in [hybrid retrieval architecture](docs/architecture/hybrid-retrieval.md) and [ADR-006](docs/architecture/ADR-006-hybrid-retrieval-baseline.md).
 
+## Grounded roadmap generation
+
+Put the Groq secret in the untracked root `.env`; never expose it through Vite:
+
+```env
+GROQ_API_KEY=gsk_your_key
+```
+
+The model and reasoning level are configuration-driven. Optional overrides use `CP_GROQ_MODEL`, `CP_GROQ_REASONING_EFFORT`, `CP_GROQ_TIMEOUT_SECONDS`, and `CP_GROQ_MAX_RETRIES`.
+
+From Command Prompt, verify the live project catalog and strict structured output:
+
+```bat
+cd /d C:\Users\kumar\Downloads\CareerPilot\CareerPilot\backend
+.venv\Scripts\python.exe -m app.modules.llm.cli --smoke
+```
+
+In the student workspace, run a gap analysis and select **Generate grounded learning roadmap**. The UI separates canonical requirements, student evidence status, retrieved resources, and generated synthesis. Partial corpus coverage names omitted skills instead of inventing recommendations.
+
+Run the controlled live evaluation only when quota permits:
+
+```bat
+cd /d C:\Users\kumar\Downloads\CareerPilot\CareerPilot\backend
+.venv\Scripts\python.exe ..\scripts\evaluate-phase5.py --compare
+```
+
+Generated evaluation results are [JSON](docs/evaluation/phase5-generation-results.json) and [Markdown](docs/evaluation/phase5-generation-results.md). Architecture and policy are in [grounded LLM generation](docs/architecture/llm-generation.md) and [ADR-007](docs/architecture/ADR-007-grounded-llm-generation.md).
+
 ## Frontend startup
 
 In another terminal:
@@ -333,4 +364,4 @@ CI contains the same unit gate and real isolated integration workflow. GitHub ex
 
 ## Implementation references
 
-The adapters use the supported asynchronous driver APIs and lifespan mechanisms described in [FastAPI lifespan](https://fastapi.tiangolo.com/advanced/events/), [PyMongo client lifecycle](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/mongoclient/), and [Neo4j async driver API](https://neo4j.com/docs/api/python-driver/current/async_api.html).
+The adapters use the supported asynchronous driver APIs and lifespan mechanisms described in [FastAPI lifespan](https://fastapi.tiangolo.com/advanced/events/), [PyMongo client lifecycle](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/mongoclient/), and [Neo4j async driver API](https://neo4j.com/docs/api/python-driver/current/async_api.html). Phase 5 provider behavior follows Groq's live Models API and strict Structured Outputs documentation; runtime discovery remains authoritative for project access.
