@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 import { ApiError } from "../api/client";
 import { getRoles, getSkills, type Entity } from "../api/knowledge";
 import {
@@ -44,7 +44,288 @@ const errorMessage = (error: unknown) =>
             : "The request could not be completed. Check the supplied information."
     : "The request could not be completed.";
 
-export function StudentWorkspace() {
+type DashboardOverviewProps = {
+  profile: Profile;
+  roles: Entity[];
+  resumes: Resume[];
+  evidence: Evidence[];
+  gap: GapRun | null;
+  roadmap: Roadmap | null;
+  readiness: Readiness | null;
+  busy: boolean;
+  onAnalyze: () => void;
+};
+
+type StudentWorkspaceProps = {
+  onAuthChange?: (authenticated: boolean) => void;
+};
+
+function DashboardOverview({
+  profile,
+  roles,
+  resumes,
+  evidence,
+  gap,
+  roadmap,
+  readiness,
+  busy,
+  onAnalyze,
+}: DashboardOverviewProps) {
+  const role = roles.find((item) => item.id === profile.target_role_id);
+  const confirmed = evidence.filter(
+    (item) => item.verification_status === "CONFIRMED",
+  ).length;
+  const partial = gap?.items.filter(
+    (item) => item.status === "PARTIALLY_SUPPORTED",
+  ).length;
+  const unverified = gap?.items.filter(
+    (item) => item.status === "UNVERIFIED",
+  ).length;
+  const totalSkills = gap?.items.length ?? evidence.length;
+  const priorityItems =
+    roadmap?.items.slice(0, 3) ??
+    gap?.items.filter((item) => item.status !== "SUPPORTED").slice(0, 3) ??
+    [];
+  const completion = totalSkills
+    ? Math.round((confirmed / totalSkills) * 100)
+    : null;
+  const coverageTotal = confirmed + (partial ?? 0) + (unverified ?? 0);
+  const confirmedStop = coverageTotal ? (confirmed / coverageTotal) * 360 : 0;
+  const partialStop = coverageTotal
+    ? ((confirmed + (partial ?? 0)) / coverageTotal) * 360
+    : 0;
+  const activeResume = resumes.find((item) => item.active);
+
+  return (
+    <section className="dashboard-surface" aria-labelledby="dashboard-title">
+      <div className="dashboard-hero">
+        <div className="dashboard-hero-copy">
+          <p className="eyebrow">YOUR PREPARATION OVERVIEW</p>
+          <h2 id="dashboard-title">
+            Good morning, <span>{profile.display_name}</span>.
+          </h2>
+          <p>
+            {role
+              ? `You are building evidence for ${role.name}.`
+              : "Choose a target role to begin your preparation path."}
+          </p>
+          <div className="hero-note">
+            <span aria-hidden="true">&quot;</span>
+            CareerPilot keeps recommendations tied to evidence you can inspect.
+          </div>
+        </div>
+        <div className="hero-goal">
+          <span className="card-label">CURRENT TARGET ROLE</span>
+          <strong>{role?.name ?? "No role selected"}</strong>
+          <div className="progress-line" aria-hidden="true">
+            <span style={{ width: `${completion ?? 0}%` }} />
+          </div>
+          <small>
+            {completion === null
+              ? "Run an analysis to establish coverage"
+              : `${completion}% confirmed evidence coverage`}
+          </small>
+          <a href="#gap" className="button-primary">
+            {gap ? "View gap analysis" : "Choose a target role"}
+            <span aria-hidden="true">-&gt;</span>
+          </a>
+        </div>
+      </div>
+
+      <div className="metric-grid">
+        <article className="metric-card">
+          <span className="metric-icon violet">R</span>
+          <span className="card-label">TARGET ROLE</span>
+          <strong>{role?.name ?? "Not selected"}</strong>
+          <small>
+            {profile.target_role_id ? "Canonical role" : "Required next step"}
+          </small>
+        </article>
+        <article className="metric-card">
+          <span className="metric-icon blue">E</span>
+          <span className="card-label">SKILL EVIDENCE</span>
+          <strong>{totalSkills || "-"}</strong>
+          <small>
+            {confirmed} confirmed · {evidence.length - confirmed} to review
+          </small>
+        </article>
+        <article className="metric-card">
+          <span className="metric-icon purple">L</span>
+          <span className="card-label">ROADMAP ITEMS</span>
+          <strong>{roadmap?.items.length ?? "-"}</strong>
+          <small>
+            {roadmap ? roadmap.coverage_status : "Generate from a gap run"}
+          </small>
+        </article>
+        <article className="metric-card">
+          <span className="metric-icon green">P</span>
+          <span className="card-label">PREPARATION READINESS</span>
+          <strong>{readiness ? `${readiness.score}%` : "-"}</strong>
+          <small>{readiness?.category ?? "Calculate a snapshot"}</small>
+        </article>
+      </div>
+
+      <div className="dashboard-grid">
+        <article className="profile-summary" id="profile">
+          <div className="profile-avatar" aria-hidden="true">
+            {profile.display_name.slice(0, 1).toUpperCase()}
+          </div>
+          <div>
+            <span className="card-label">MY PROFILE</span>
+            <h3>Profile overview</h3>
+            <p>{profile.display_name} · private student account</p>
+          </div>
+          <div className="profile-target">
+            <span className="card-label">TARGET ROLE</span>
+            <strong>{role?.name ?? "Not selected"}</strong>
+          </div>
+        </article>
+
+        <article className="dashboard-card gap-card">
+          <div className="card-heading">
+            <div>
+              <h3>Skill gap overview</h3>
+              <p>
+                {gap
+                  ? "Based on your evidence and role requirements"
+                  : "Run a role analysis to see your current coverage"}
+              </p>
+            </div>
+            <a href="#gap" className="button-secondary">
+              View full analysis <span aria-hidden="true">-&gt;</span>
+            </a>
+          </div>
+          {gap ? (
+            <div className="gap-summary">
+              <div
+                className="gap-ring"
+                style={
+                  {
+                    "--confirmed-stop": `${confirmedStop}deg`,
+                    "--partial-stop": `${partialStop}deg`,
+                  } as CSSProperties
+                }
+              >
+                <strong>{gap.items.length}</strong>
+                <span>Total skills</span>
+              </div>
+              <ul className="legend-list">
+                <li>
+                  <span className="legend-dot supported" />{" "}
+                  <strong>{confirmed}</strong> Supported{" "}
+                  <small>Confirmed direct evidence</small>
+                </li>
+                <li>
+                  <span className="legend-dot partial" />{" "}
+                  <strong>{partial ?? 0}</strong> Partially supported{" "}
+                  <small>Evidence needs confirmation</small>
+                </li>
+                <li>
+                  <span className="legend-dot unverified" />{" "}
+                  <strong>{unverified ?? 0}</strong> Unverified{" "}
+                  <small>No direct evidence yet</small>
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <div className="empty-dashboard-state">
+              <strong>Your first useful signal starts with a role.</strong>
+              <button
+                disabled={busy || !profile.target_role_id}
+                onClick={onAnalyze}
+              >
+                Run gap analysis
+              </button>
+            </div>
+          )}
+        </article>
+
+        <article className="dashboard-card priority-card">
+          <div className="card-heading">
+            <div>
+              <h3>Priority learning path</h3>
+              <p>
+                {roadmap
+                  ? "Top items from your grounded roadmap"
+                  : "Priority gaps from the current role"}
+              </p>
+            </div>
+            <a href="#roadmap" className="text-link">
+              Open roadmap
+            </a>
+          </div>
+          {priorityItems.length ? (
+            <ol className="priority-list">
+              {priorityItems.map((item, index) => (
+                <li key={"item_id" in item ? item.item_id : item.skill_id}>
+                  <span className={`priority-index priority-${index + 1}`}>
+                    {index + 1}
+                  </span>
+                  <div>
+                    <strong>{item.skill_name}</strong>
+                    <small>
+                      {"priority" in item ? item.priority : item.importance} ·{" "}
+                      {item.status.replaceAll("_", " ")}
+                    </small>
+                  </div>
+                  <a href="#roadmap" aria-label={`Open ${item.skill_name}`}>
+                    -&gt;
+                  </a>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="empty-dashboard-state">
+              No priority skills are available yet.
+            </p>
+          )}
+        </article>
+
+        <article className="dashboard-card activity-card">
+          <div className="card-heading">
+            <h3>Workspace signals</h3>
+            <span className="status-badge">LIVE DATA</span>
+          </div>
+          <ul className="activity-list">
+            <li>
+              <span className="activity-icon">R</span>
+              <div>
+                <strong>Active resume</strong>
+                <small>
+                  {activeResume?.original_filename ?? "No resume uploaded"}
+                </small>
+              </div>
+            </li>
+            <li>
+              <span className="activity-icon">E</span>
+              <div>
+                <strong>Evidence review</strong>
+                <small>
+                  {evidence.length
+                    ? `${confirmed} of ${evidence.length} confirmed`
+                    : "Nothing to review yet"}
+                </small>
+              </div>
+            </li>
+            <li>
+              <span className="activity-icon">P</span>
+              <div>
+                <strong>Practice status</strong>
+                <small>
+                  {readiness
+                    ? `${readiness.components.length} readiness components`
+                    : "No readiness snapshot"}
+                </small>
+              </div>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+export function StudentWorkspace({ onAuthChange }: StudentWorkspaceProps) {
   const [token, setToken] = useState("");
   const [mode, setMode] = useState<"register" | "token">("register");
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -115,7 +396,9 @@ export function StudentWorkspace() {
     if (mode === "register")
       body.display_name = String(data.get("display_name"));
     try {
-      setToken(await authenticate(mode, body));
+      const nextToken = await authenticate(mode, body);
+      setToken(nextToken);
+      onAuthChange?.(true);
     } catch (failure) {
       setError(errorMessage(failure));
     } finally {
@@ -125,41 +408,61 @@ export function StudentWorkspace() {
 
   if (!token)
     return (
-      <section className="student-panel" aria-labelledby="student-title">
-        <p className="eyebrow">PRIVATE STUDENT EVIDENCE</p>
-        <h2 id="student-title">Your evidence workspace</h2>
-        <p>
-          Resume evidence stays private and remains unconfirmed until you review
-          it.
-        </p>
-        <form onSubmit={submitAuth} className="student-form">
-          {mode === "register" && (
+      <section className="auth-panel" aria-labelledby="student-title">
+        <div className="auth-story">
+          <span className="auth-mark" aria-hidden="true">
+            C
+          </span>
+          <p className="eyebrow">CAREERPILOT</p>
+          <h2>Build the evidence behind your next role.</h2>
+          <p>
+            Resume observations, role requirements, and grounded preparation in
+            one private workspace.
+          </p>
+          <div className="auth-story-line">
+            <span /> Evidence stays inspectable at every step.
+          </div>
+        </div>
+        <div className="auth-form-panel">
+          <p className="eyebrow">PRIVATE STUDENT WORKSPACE</p>
+          <h2 id="student-title">
+            {mode === "register" ? "Create your workspace" : "Welcome back"}
+          </h2>
+          <p>
+            {mode === "register"
+              ? "Start with the profile fields CareerPilot actually uses."
+              : "Continue your evidence-led preparation journey."}
+          </p>
+          <form onSubmit={submitAuth} className="student-form">
+            {mode === "register" && (
+              <label>
+                Display name
+                <input name="display_name" required maxLength={80} />
+              </label>
+            )}
             <label>
-              Display name
-              <input name="display_name" required maxLength={80} />
+              Email
+              <input name="email" type="email" required />
             </label>
-          )}
-          <label>
-            Email
-            <input name="email" type="email" required />
-          </label>
-          <label>
-            Password
-            <input name="password" type="password" minLength={12} required />
-          </label>
-          <button disabled={busy}>
-            {mode === "register" ? "Create private workspace" : "Sign in"}
+            <label>
+              Password
+              <input name="password" type="password" minLength={12} required />
+            </label>
+            <button className="button-primary auth-submit" disabled={busy}>
+              {mode === "register" ? "Create private workspace" : "Sign in"}{" "}
+              <span aria-hidden="true">-&gt;</span>
+            </button>
+          </form>
+          <button
+            className="text-button"
+            onClick={() => setMode(mode === "register" ? "token" : "register")}
+          >
+            {mode === "register"
+              ? "Already registered? Sign in"
+              : "Create an account"}
           </button>
-        </form>
-        <button
-          className="text-button"
-          onClick={() => setMode(mode === "register" ? "token" : "register")}
-        >
-          {mode === "register"
-            ? "Already registered? Sign in"
-            : "Create an account"}
-        </button>
-        {error && <p role="alert">{error}</p>}
+          {error && <p role="alert">{error}</p>}
+        </div>
       </section>
     );
 
@@ -348,102 +651,129 @@ export function StudentWorkspace() {
             {profile?.display_name ?? "Your workspace"}
           </h2>
         </div>
-        <button onClick={() => setToken("")}>Sign out</button>
+        <button
+          onClick={() => {
+            setToken("");
+            onAuthChange?.(false);
+          }}
+        >
+          Sign out
+        </button>
       </div>
       <p className="privacy-note">
         CareerPilot records evidence, not proficiency. Extracted mentions
         require your confirmation.
       </p>
-      <form onSubmit={upload} className="upload-row">
-        <label>
-          PDF or DOCX resume
-          <input
-            name="resume"
-            type="file"
-            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            required
-          />
-        </label>
-        <button disabled={busy}>Upload and process</button>
-      </form>
-      {resumes.length > 0 && (
-        <p className="version-note">
-          Active resume version:{" "}
-          {resumes.find((item) => item.active)?.version ?? "none"} ·{" "}
-          {resumes.length} preserved version(s)
-        </p>
+      {profile && (
+        <DashboardOverview
+          profile={profile}
+          roles={roles}
+          resumes={resumes}
+          evidence={evidence}
+          gap={gap}
+          roadmap={roadmap}
+          readiness={readiness}
+          busy={busy}
+          onAnalyze={analyze}
+        />
       )}
-      {evidence.length > 0 && (
-        <div className="review">
-          <h3>Review detected evidence</h3>
-          <ul>
-            {evidence.map((item) => (
-              <li key={item.evidence_id}>
-                <div>
-                  <strong>{item.skill_name ?? item.raw_text}</strong>
-                  <small>
-                    {item.section} · {item.normalization_status} ·{" "}
-                    {item.verification_status}
-                  </small>
-                  <p>{item.evidence_text}</p>
-                </div>
-                <div className="review-actions">
-                  <button
-                    disabled={busy}
-                    onClick={() => decide(item, "CONFIRM")}
-                  >
-                    Confirm
-                  </button>
-                  <button
-                    disabled={busy}
-                    onClick={() => decide(item, "REJECT")}
-                  >
-                    Reject
-                  </button>
-                  {!item.skill_id && (
-                    <select
-                      aria-label={`Correct ${item.raw_text}`}
-                      defaultValue=""
-                      onChange={(event) =>
-                        event.target.value &&
-                        decide(item, "CONFIRM", event.target.value)
-                      }
+      <div id="evidence" className="workspace-section">
+        <p className="section-kicker">01 / RESUME &amp; EVIDENCE</p>
+        <form onSubmit={upload} className="upload-row">
+          <label>
+            PDF or DOCX resume
+            <input
+              name="resume"
+              type="file"
+              accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              required
+            />
+          </label>
+          <button disabled={busy}>Upload and process</button>
+        </form>
+        {resumes.length > 0 && (
+          <p className="version-note">
+            Active resume version:{" "}
+            {resumes.find((item) => item.active)?.version ?? "none"} ·{" "}
+            {resumes.length} preserved version(s)
+          </p>
+        )}
+        {evidence.length > 0 && (
+          <div className="review">
+            <h3>Review detected evidence</h3>
+            <ul>
+              {evidence.map((item) => (
+                <li key={item.evidence_id}>
+                  <div>
+                    <strong>{item.skill_name ?? item.raw_text}</strong>
+                    <small>
+                      {item.section} · {item.normalization_status} ·{" "}
+                      {item.verification_status}
+                    </small>
+                    <p>{item.evidence_text}</p>
+                  </div>
+                  <div className="review-actions">
+                    <button
+                      disabled={busy}
+                      onClick={() => decide(item, "CONFIRM")}
                     >
-                      <option value="">Correct to canonical skill…</option>
-                      {skills.map((skill) => (
-                        <option key={skill.id} value={skill.id}>
-                          {skill.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
+                      Confirm
+                    </button>
+                    <button
+                      disabled={busy}
+                      onClick={() => decide(item, "REJECT")}
+                    >
+                      Reject
+                    </button>
+                    {!item.skill_id && (
+                      <select
+                        aria-label={`Correct ${item.raw_text}`}
+                        defaultValue=""
+                        onChange={(event) =>
+                          event.target.value &&
+                          decide(item, "CONFIRM", event.target.value)
+                        }
+                      >
+                        <option value="">Correct to canonical skill…</option>
+                        {skills.map((skill) => (
+                          <option key={skill.id} value={skill.id}>
+                            {skill.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+      <div id="gap" className="workspace-section">
+        <p className="section-kicker">02 / SKILL GAP</p>
+        <div className="target-row">
+          <label>
+            Canonical target role
+            <select
+              value={profile?.target_role_id ?? ""}
+              onChange={(event) => selectRole(event.target.value)}
+            >
+              <option value="">Select a role…</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {role.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button disabled={busy || !profile?.target_role_id} onClick={analyze}>
+            Run evidence gap analysis
+          </button>
         </div>
-      )}
-      <div className="target-row">
-        <label>
-          Canonical target role
-          <select
-            value={profile?.target_role_id ?? ""}
-            onChange={(event) => selectRole(event.target.value)}
-          >
-            <option value="">Select a role…</option>
-            {roles.map((role) => (
-              <option key={role.id} value={role.id}>
-                {role.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button disabled={busy || !profile?.target_role_id} onClick={analyze}>
-          Run evidence gap analysis
-        </button>
       </div>
       {gap && (
-        <div className="gap-results">
+        <div id="roadmap" className="gap-results workspace-section">
+          <p className="section-kicker">03 / ROADMAP &amp; RETRIEVAL</p>
           <h3>Evidence against this role</h3>
           <p>
             {gap.rule_version} · {gap.knowledge_dataset_version}
@@ -475,7 +805,7 @@ export function StudentWorkspace() {
         </div>
       )}
       {roadmap && (
-        <div className="roadmap-results" aria-live="polite">
+        <div className="roadmap-results workspace-section" aria-live="polite">
           <p className="eyebrow">PERSONALIZED LEARNING ROADMAP</p>
           <h3>Validated evidence, generated recommendations</h3>
           <p className="roadmap-meta">
@@ -559,6 +889,7 @@ export function StudentWorkspace() {
       )}
       {gap && (
         <section
+          id="practice"
           className="specialist-workflows"
           aria-labelledby="specialist-title"
         >
@@ -607,7 +938,11 @@ export function StudentWorkspace() {
         </section>
       )}
       {preparation && (
-        <section className="company-preparation" aria-live="polite">
+        <section
+          id="company-prep"
+          className="company-preparation"
+          aria-live="polite"
+        >
           <p className="eyebrow">COMPANY PREPARATION</p>
           <h3>{preparation.company_role_name}</h3>
           <p className="scope-warning" role="status">
@@ -644,7 +979,7 @@ export function StudentWorkspace() {
         </section>
       )}
       {interview && (
-        <section className="mock-interview" aria-live="polite">
+        <section id="interview" className="mock-interview" aria-live="polite">
           <p className="eyebrow">TEXT MOCK INTERVIEW</p>
           <h3>{interview.company_role_name}</h3>
           <p>
@@ -720,7 +1055,7 @@ export function StudentWorkspace() {
         </section>
       )}
       {gap && (
-        <section className="readiness-panel">
+        <section id="readiness" className="readiness-panel">
           <p className="eyebrow">PREPARATION READINESS</p>
           <h3>Evidence-backed, not a placement prediction</h3>
           <button disabled={busy} onClick={assessReadiness}>
@@ -755,8 +1090,20 @@ export function StudentWorkspace() {
         </section>
       )}
       {retrieval && (
-        <div className="retrieval-results" aria-live="polite">
-          <h3>Retrieval inspection</h3>
+        <aside className="retrieval-results evidence-drawer" aria-live="polite">
+          <div className="drawer-heading">
+            <div>
+              <p className="eyebrow">WHY CAREERPILOT RECOMMENDED THIS</p>
+              <h3>Retrieval inspection</h3>
+            </div>
+            <button
+              className="drawer-close"
+              aria-label="Close evidence inspector"
+              onClick={() => setRetrieval(null)}
+            >
+              Close
+            </button>
+          </div>
           <p>
             {retrieval.retrieval_strategy} · {retrieval.sufficiency.status} ·
             trace {retrieval.trace_id}
@@ -798,7 +1145,7 @@ export function StudentWorkspace() {
               <p>No validated resource available.</p>
             )}
           </section>
-        </div>
+        </aside>
       )}
       {error && <p role="alert">{error}</p>}
     </section>

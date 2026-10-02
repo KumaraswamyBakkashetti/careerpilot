@@ -4,7 +4,7 @@
 
 CareerPilot is a placement-preparation and career-mentoring system. Its planned capabilities combine persistent student profiles, resume evidence, career-domain knowledge, graph/vector retrieval, agent orchestration, and evidence-backed preparation workflows. KA-RAG informs the research direction; this repository does not implement the paper or claim its results.
 
-**Current status: Phase 6 implemented and locally verified.** CareerPilot now includes grounded company preparation, text mock interviews, practice-evidence feedback, deterministic readiness snapshots, and a bounded specialist orchestrator. The only company is explicitly synthetic; readiness is not a hiring probability. See [PHASE6_REPORT.md](PHASE6_REPORT.md) for evidence and limits.
+**Current status: Phase 7 frontend experience implemented and locally verified.** CareerPilot includes grounded company preparation, text mock interviews, practice-evidence feedback, deterministic readiness snapshots, and a bounded specialist orchestrator inside a persistent evidence-led workspace. The only company is explicitly synthetic; readiness is not a hiring probability. See [PHASE7_REPORT.md](PHASE7_REPORT.md) for frontend evidence and limits, and [PHASE6_REPORT.md](PHASE6_REPORT.md) for domain verification.
 
 ## Scope and architecture
 
@@ -231,6 +231,8 @@ npm.cmd run dev
 ```
 
 Open `http://127.0.0.1:5173`. Create a private workspace or sign in, upload a PDF/DOCX, review each extracted mention, choose a canonical role, and run gap analysis. Tokens stay in React memory and are cleared on refresh/sign-out. The page also retains the knowledge explorer and service diagnostics. Vite forwards `/health` and `/api` to FastAPI. The production bundle needs either a reverse proxy for those paths or `VITE_API_BASE_URL` set **before building**.
+
+The Phase 7 shell provides direct hash navigation for the supported workflow surfaces: `#overview`, `#evidence`, `#gap`, `#roadmap`, `#practice`, and `#readiness`. The visual language, semantic evidence tokens, responsive behavior, and reduced-motion policy are documented in [the frontend design system](docs/frontend/design-system.md) and [frontend architecture](docs/architecture/frontend.md).
 
 ## Docker application workflow
 

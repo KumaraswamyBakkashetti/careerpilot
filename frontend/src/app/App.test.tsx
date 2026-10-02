@@ -34,10 +34,23 @@ it("renders accessible loading state", () => {
   );
   render(<App />);
   expect(
-    screen.getByRole("heading", { name: /Evidence first/ }),
+    screen.getByRole("heading", { name: /Create your workspace/ }),
   ).toBeInTheDocument();
   expect(screen.getAllByRole("status")[0]).toHaveTextContent("Checking");
   expect(screen.getByRole("button", { name: /Refresh/ })).toBeDisabled();
+});
+it("hides private workflow navigation before authentication", () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(() => new Promise(() => {})),
+  );
+  render(<App />);
+  expect(
+    screen.queryByRole("link", { name: /Learning roadmap/ }),
+  ).not.toBeInTheDocument();
+  expect(
+    screen.getByText(/Sign in to open your private preparation workspace/),
+  ).toBeInTheDocument();
 });
 it("displays successful connectivity and refreshes", async () => {
   const fetcher = healthyFetch();
@@ -48,7 +61,7 @@ it("displays successful connectivity and refreshes", async () => {
   ).toBeInTheDocument();
   expect(screen.getAllByText("Available")).toHaveLength(3);
   fireEvent.click(screen.getByRole("button", { name: /Refresh/ }));
-  await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(5));
+  await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(4));
 });
 it("distinguishes dependency outage from backend outage", async () => {
   vi.stubGlobal("fetch", healthyFetch("up", "down"));

@@ -1,4 +1,3 @@
-start docker 
 
 
 cd /d "C:\Users\KumaraswamyBakkashet\OneDrive - Zeta Global\Documents\CareerPilot"
